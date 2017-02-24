@@ -62,7 +62,7 @@ LinkedList<T>::LinkedList(LinkedList<T> &&other)
 
 // Copy assignment operator
 template <class T>
-void LinkedList<T>::operator=(const LinkedList<T> &other)
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T> &other)
 {
     if (&other != this && other._lst)
     {
@@ -78,11 +78,12 @@ void LinkedList<T>::operator=(const LinkedList<T> &other)
 
         push_back(p->value);
     }
+    return *this;
 }
 
 // Move assignment operator
 template <class T>
-void LinkedList<T>::operator=(LinkedList &&other)
+LinkedList<T>& LinkedList<T>::operator=(LinkedList &&other)
 {
     if (&other != this)
     {
@@ -93,6 +94,7 @@ void LinkedList<T>::operator=(LinkedList &&other)
         other._lst = nullptr;
         other._size = 0;
     }
+    return *this;
 }
 
 template <class T>

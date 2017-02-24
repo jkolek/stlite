@@ -76,8 +76,8 @@ public:
             delete [] _data;
     }
 
-    void operator=(const Vector &other); // Copy assignment operator
-    void operator=(Vector &&other);      // Move assignment operator
+    Vector<T>& operator=(const Vector &other); // Copy assignment operator
+    Vector<T>& operator=(Vector &&other);      // Move assignment operator
 
     // Capacity
     unsigned size() { return _size; }

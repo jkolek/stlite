@@ -58,7 +58,7 @@ Vector<T>::Vector(Vector &&other)
 
 // Copy assignment operator
 template <class T>
-void Vector<T>::operator=(const Vector &other)
+Vector<T>& Vector<T>::operator=(const Vector &other)
 {
     if (&other != this)
     {
@@ -69,11 +69,12 @@ void Vector<T>::operator=(const Vector &other)
         allocate_data(other._size);
         std::copy(other._data, other._data + _size, _data);
     }
+    return *this;
 }
 
 // Move assignment operator
 template <class T>
-void Vector<T>::operator=(Vector &&other)
+Vector<T>& Vector<T>::operator=(Vector &&other)
 {
     if (&other != this)
     {
@@ -88,6 +89,7 @@ void Vector<T>::operator=(Vector &&other)
         other._capacity = 0;
         other._size = 0;
     }
+    return *this;
 }
 
 // Append element to end of the list

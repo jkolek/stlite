@@ -59,13 +59,16 @@ public:
     // This constructor creates list from the given array
     LinkedList(T *arr, unsigned len);
 
-    LinkedList(const LinkedList<T> &other);     // Copy constructor
-    LinkedList(LinkedList<T> &&other);          // Move constructor
+    LinkedList(const LinkedList<T> &other); // Copy constructor
+    LinkedList(LinkedList<T> &&other);      // Move constructor
 
-    ~LinkedList() { clear(); }                  // Destructor
+    ~LinkedList() { clear(); }              // Destructor
 
-    void operator=(const LinkedList<T> &other); // Copy assignment operator
-    void operator=(LinkedList<T> &&other);      // Move assignment operator
+    // Copy assignment operator
+    LinkedList<T>& operator=(const LinkedList<T> &other);
+
+    // Move assignment operator
+    LinkedList<T>& operator=(LinkedList<T> &&other);
 
     // Capacity
     bool empty() { return _lst == nullptr; }
