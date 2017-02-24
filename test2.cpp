@@ -1,5 +1,6 @@
 #include "linkedlist.h"
 
+#include <iostream>
 #include <vector>
 #include <list>
 
@@ -18,7 +19,7 @@ void test_linked_list_push_back()
     //while (!lst.empty())
     //    lst.pop_front();
 
-    lst.clear();
+    //lst.clear();
 }
 
 void test_std_linked_list_push_back()
@@ -28,8 +29,8 @@ void test_std_linked_list_push_back()
     for (unsigned i = 0; i < MAX_NUM; i++)
         lst.push_back(i);
 
-    while (!lst.empty())
-        lst.pop_front();
+    //while (!lst.empty())
+    //    lst.pop_front();
 }
 
 void test_vector_push_back()
@@ -66,8 +67,14 @@ void test_vector_push_front()
 
 int main()
 {
+    clock_t begin_time = clock();
     test_linked_list_push_back();
-    //test_std_linked_list_push_back();
+    std::cout << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
+
+    begin_time = clock();
+    test_std_linked_list_push_back();
+    std::cout << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
+
     //test_vector_push_back();
 
     //test_linked_list_push_front();

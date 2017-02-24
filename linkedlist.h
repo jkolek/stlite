@@ -49,7 +49,7 @@ class LinkedList
     //
 
     Element<T> *_lst = nullptr;
-    unsigned _sz = 0;
+    unsigned _size = 0;
 
     friend class LinkedListIterator<T>;
 
@@ -59,29 +59,30 @@ public:
     // This constructor creates list from the given array
     LinkedList(T *arr, unsigned len);
 
-    LinkedList(const LinkedList &other);     // Copy constructor
-    LinkedList(LinkedList &&other);          // Move constructor
+    LinkedList(const LinkedList<T> &other);     // Copy constructor
+    LinkedList(LinkedList<T> &&other);          // Move constructor
 
-    ~LinkedList() { clear(); }               // Destructor
+    ~LinkedList() { clear(); }                  // Destructor
 
-    void operator=(const LinkedList &other); // Copy assignment operator
-    void operator=(LinkedList &&other);      // Move assignment operator
+    void operator=(const LinkedList<T> &other); // Copy assignment operator
+    void operator=(LinkedList<T> &&other);      // Move assignment operator
 
     // Capacity
-    bool empty() { return _sz == 0; }
-    unsigned size() { return _sz; }
+    bool empty() { return _lst == nullptr; }
+    unsigned size() { return _size; }
 
     // Element access
+    // If the list is empty, the return value of these functions is undefined
     T front() { if (_lst) return _lst->next->value; }
     T back() { if (_lst) return _lst->value; }
     T get(unsigned pos);
 
     // Modifiers
     void push_back(T value);
-    void append(const LinkedList &other);
     void push_front(T value);
     bool pop_front();
     bool pop_back();
+    void append(const LinkedList &other);
     void clear();
 
     // Operations
@@ -133,6 +134,7 @@ public:
         if (_next_is_end)
             return true;
 
+        // There is one more element to iterate
         if (_current == _list->_lst)
             _next_is_end = true;
 

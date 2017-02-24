@@ -30,7 +30,7 @@ LinkedList<T>::LinkedList(T *arr, unsigned len)
 
 // Copy constructor
 template <class T>
-LinkedList<T>::LinkedList(const LinkedList &other)
+LinkedList<T>::LinkedList(const LinkedList<T> &other)
 {
     if (&other != this && other._lst)
     {
@@ -48,15 +48,21 @@ LinkedList<T>::LinkedList(const LinkedList &other)
 
 // Move constructor
 template <class T>
-LinkedList<T>::LinkedList(LinkedList &&other)
+LinkedList<T>::LinkedList(LinkedList<T> &&other)
 {
     if (&other != this)
+    {
         _lst = other._lst;
+        _size = other._size;
+
+        other._lst = nullptr;
+        other._size = 0;
+    }
 }
 
 // Copy assignment operator
 template <class T>
-void LinkedList<T>::operator=(const LinkedList &other)
+void LinkedList<T>::operator=(const LinkedList<T> &other)
 {
     if (&other != this && other._lst)
     {
@@ -82,180 +88,11 @@ void LinkedList<T>::operator=(LinkedList &&other)
     {
         clear();
         _lst = other._lst;
+        _size = other._size;
+
+        other._lst = nullptr;
+        other._size = 0;
     }
-}
-
-// Append element to end of the list
-template <class T>
-void LinkedList<T>::push_back(T value)
-{
-    Element<T> *e = new Element<T>(value);
-
-    if (!_lst)
-    {
-        e->next = e;
-    }
-    else
-    {
-        e->next = _lst->next;
-        _lst->next = e;
-    }
-
-    _lst = e;
-    _sz++;
-}
-
-// Append elements of other to end of the list
-template <class T>
-void LinkedList<T>::append(const LinkedList &other)
-{
-    if (other._lst)
-    {
-        // Pointer to the first element
-        Element<T> *p = other._lst->next;
-        while (p != other._lst)
-        {
-            push_back(p->value);
-            p = p->next;
-        }
-
-        push_back(p->value);
-    }
-}
-
-// Insert element at beginning of the list
-template <class T>
-void LinkedList<T>::push_front(T value)
-{
-    Element<T> *e = new Element<T>(value);
-
-    if (!_lst)
-    {
-        e->next = e;
-        _lst = e;
-    }
-    else
-    {
-        e->next = _lst->next;
-        _lst->next = e;
-    }
-
-    _sz++;
-}
-
-// Remove element with the value from the list.
-// Return true if element has been removed, false otherwise.
-template <class T>
-bool LinkedList<T>::remove(T value)
-{
-    if (!_lst)
-        return false;
-
-    if (_lst->next == _lst)
-    {
-        if (_lst->value == value)
-        {
-            delete _lst;
-            _sz--;
-            return true;
-        }
-
-        return false;
-    }
-
-    // Pointer to the last element
-    Element<T> *p = _lst;
-
-    while (p->next->value != value &&  p->next != _lst)
-        p = p->next;
-
-    if (p->next->value == value)
-    {
-        if (p->next == _lst)
-            _lst = p;
-
-        Element<T> *old = p->next;
-        p->next = p->next->next;
-        delete old;
-        _sz--;
-
-        return true;
-    }
-
-    return false;
-}
-
-// Remove element at the position "pos" in the list.
-// Return true if element has been removed, false otherwise.
-template <class T>
-bool LinkedList<T>::remove_pos(unsigned pos)
-{
-    if (!_lst)
-        return false;
-
-    // TODO: Implement
-
-    return false;
-}
-
-// Two possible cases:
-//   - The list contains a single element, we remove it and set _lst to nullptr
-//     and _sz to 0.
-//   - The list has more than one element. Removing a first element from the
-//     list is efficient and easy, just remove _lst->next which points to the
-//     first element of the list.
-template <class T>
-bool LinkedList<T>::pop_front()
-{
-    if (!_lst)
-        return false;
-
-    if (_lst->next == _lst)
-    {
-        delete _lst;
-        _lst = nullptr;
-        _sz = 0;
-    }
-    else
-    {
-        Element<T> *old = _lst->next;
-        _lst->next = _lst->next->next;
-        delete old;
-        _sz--;
-    }
-
-    return false;
-}
-
-template <class T>
-bool LinkedList<T>::pop_back()
-{
-    if (!_lst)
-        return false;
-
-    if (_lst->next == _lst)
-    {
-        // The list contains a single element
-
-        delete _lst;
-        _lst = nullptr;
-        _sz = 0;
-    }
-    else
-    {
-        // We need to traverse entire list to get "next" pointer that points to
-        // the _lst.
-
-        Element<T> *p = _lst->next;
-        while (p->next != _lst)
-            p = p->next;
-        p->next = _lst->next;
-        delete _lst;
-        _lst = p;
-        _sz--;
-    }
-
-    return true;
 }
 
 template <class T>
@@ -278,6 +115,123 @@ T LinkedList<T>::get(unsigned pos)
     }
 }
 
+// Append element to end of the list
+template <class T>
+void LinkedList<T>::push_back(T value)
+{
+    Element<T> *e = new Element<T>(value);
+
+    if (!_lst)
+    {
+        e->next = e;
+    }
+    else
+    {
+        e->next = _lst->next;
+        _lst->next = e;
+    }
+
+    _lst = e;
+    _size++;
+}
+
+// Insert element at beginning of the list
+template <class T>
+void LinkedList<T>::push_front(T value)
+{
+    Element<T> *e = new Element<T>(value);
+
+    if (!_lst)
+    {
+        e->next = e;
+        _lst = e;
+    }
+    else
+    {
+        e->next = _lst->next;
+        _lst->next = e;
+    }
+
+    _size++;
+}
+// Two possible cases:
+//   - The list contains a single element, we remove it and set _lst to nullptr
+//     and _size to 0.
+//   - The list has more than one element. Removing a first element from the
+//     list is efficient and easy, just remove _lst->next which points to the
+//     first element of the list.
+template <class T>
+bool LinkedList<T>::pop_front()
+{
+    if (!_lst)
+        return false;
+
+    if (_lst->next == _lst)
+    {
+        delete _lst;
+        _lst = nullptr;
+        _size = 0;
+    }
+    else
+    {
+        Element<T> *old = _lst->next;
+        _lst->next = _lst->next->next;
+        delete old;
+        _size--;
+    }
+
+    return false;
+}
+
+template <class T>
+bool LinkedList<T>::pop_back()
+{
+    if (!_lst)
+        return false;
+
+    if (_lst->next == _lst)
+    {
+        // The list contains a single element
+
+        delete _lst;
+        _lst = nullptr;
+        _size = 0;
+    }
+    else
+    {
+        // We need to traverse entire list to get "next" pointer that points to
+        // the _lst.
+
+        Element<T> *p = _lst->next;
+        while (p->next != _lst)
+            p = p->next;
+        p->next = _lst->next;
+        delete _lst;
+        _lst = p;
+        _size--;
+    }
+
+    return true;
+}
+
+// Append elements of other to end of the list
+template <class T>
+void LinkedList<T>::append(const LinkedList &other)
+{
+    if (other._lst)
+    {
+        // Pointer to the first element
+        Element<T> *p = other._lst->next;
+        while (p != other._lst)
+        {
+            push_back(p->value);
+            p = p->next;
+        }
+
+        push_back(p->value);
+    }
+}
+
 template <class T>
 void LinkedList<T>::clear()
 {
@@ -295,7 +249,62 @@ void LinkedList<T>::clear()
 
     delete _lst;
     _lst = nullptr;
-    _sz = 0;
+    _size = 0;
+}
+
+// Remove element with the value from the list.
+// Return true if element has been removed, false otherwise.
+template <class T>
+bool LinkedList<T>::remove(T value)
+{
+    if (!_lst)
+        return false;
+
+    if (_lst->next == _lst)
+    {
+        if (_lst->value == value)
+        {
+            delete _lst;
+            _size--;
+            return true;
+        }
+
+        return false;
+    }
+
+    // Pointer to the last element
+    Element<T> *p = _lst;
+
+    while (p->next->value != value &&  p->next != _lst)
+        p = p->next;
+
+    if (p->next->value == value)
+    {
+        if (p->next == _lst)
+            _lst = p;
+
+        Element<T> *old = p->next;
+        p->next = p->next->next;
+        delete old;
+        _size--;
+
+        return true;
+    }
+
+    return false;
+}
+
+// Remove element at the position "pos" in the list.
+// Return true if element has been removed, false otherwise.
+template <class T>
+bool LinkedList<T>::remove_pos(unsigned pos)
+{
+    if (!_lst)
+        return false;
+
+    // TODO: Implement
+
+    return false;
 }
 
 template <class T>
