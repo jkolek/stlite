@@ -39,26 +39,26 @@ class Vector
 
     friend class VectorIterator<T>;
 
-public:
-    Vector()
+    void allocate_data(unsigned capacity)
     {
-        //_data = new T[BLOCK_SIZE];
-        //_capacity = BLOCK_SIZE;
+        _capacity = capacity;
+        _data = new T[_capacity];
     }
+
+public:
+    Vector() {}
 
     // Fill constructors
     explicit Vector(unsigned n)
     {
-        _data = new T[n];
-        _capacity = n;
         _size = n;
+        allocate_data(n);
     }
 
     explicit Vector(unsigned n, const T& val)
     {
-        _data = new T[n];
-        _capacity = n;
         _size = n;
+        allocate_data(n);
         for (unsigned i = 0; i < n; i++)
             _data[i] = val;
     }
@@ -97,6 +97,9 @@ public:
     bool pop_back();
     void append(const Vector &other);
     void clear();
+
+    // Operations
+    void reverse();
 
     VectorIterator<T> *create_iterator()
     {

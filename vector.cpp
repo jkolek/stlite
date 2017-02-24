@@ -21,19 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <algorithm>
+
 template <class T>
 Vector<T>::Vector(T *arr, unsigned len)
 {
-    for (unsigned i = 0; i < len; i++)
-        push_back(arr[i]);
-    _capacity = len;
+    _size = len;
+    allocate_data(len);
+    std::copy(arr, arr + _size, _data);
 }
 
 // Copy constructor
 template <class T>
 Vector<T>::Vector(const Vector &other)
 {
-    // TODO: Implement
+    _size = other._size;
+    allocate_data(other._size);
+    std::copy(other._data, other._data + _size, _data);
 }
 
 // Move constructor
@@ -56,7 +60,15 @@ Vector<T>::Vector(Vector &&other)
 template <class T>
 void Vector<T>::operator=(const Vector &other)
 {
-    // TODO: Implement
+    if (&other != this)
+    {
+        if (_data)
+            delete [] _data;
+
+        _size = other._size;
+        allocate_data(other._size);
+        std::copy(other._data, other._data + _size, _data);
+    }
 }
 
 // Move assignment operator
@@ -84,8 +96,7 @@ void Vector<T>::push_back(T value)
 {
     if (!_data)
     {
-        _data = new T[BLOCK_SIZE];
-        _capacity = BLOCK_SIZE;
+        allocate_data(BLOCK_SIZE);
     }
     else if (_size >= _capacity)
     {
@@ -95,8 +106,7 @@ void Vector<T>::push_back(T value)
             return;
 
         T *tmp = new T[new_capacity];
-        for (unsigned i = 0; i < _capacity; i++)
-            tmp[i] = _data[i];
+        std::copy(_data, _data + _size, tmp);
         delete [] _data;
         _data = tmp;
         _capacity = new_capacity;
@@ -112,7 +122,7 @@ bool Vector<T>::pop_back()
         _size--;
 }
 
-// Append elements of other to end of the list
+// Append elements of other to end of the vector
 template <class T>
 void Vector<T>::append(const Vector &other)
 {
@@ -123,4 +133,23 @@ template <class T>
 void Vector<T>::clear()
 {
     _size = 0;
+}
+
+template <class T>
+void Vector<T>::reverse()
+{
+    if (_size == 0)
+        return;
+
+    unsigned i = 0;
+    unsigned j = _size-1;
+
+    while (i < j)
+    {
+        T tmp = _data[i];
+        _data[i] = _data[j];
+        _data[j] = tmp;
+        i++;
+        j--;
+    }
 }

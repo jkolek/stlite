@@ -134,7 +134,7 @@ int main()
     assert(vec6.back() == 88);
 
     // Copy constructor test
-    /*Vector<int> *tmp3 = new Vector<int>(arr, arr_size);
+    Vector<int> *tmp3 = new Vector<int>(arr, arr_size);
     Vector<int> vec7(*tmp3);
     delete tmp3;
 
@@ -152,8 +152,18 @@ int main()
     assert(vec8.size() == arr_size);
     assert(vec8.capacity() == arr_size);
     assert(vec8.front() == 44);
-    assert(vec8.back() == 88);*/
+    assert(vec8.back() == 88);
 
+    // Test reverse
+
+    Vector<int> vec9(arr, arr_size);
+    vec9.reverse();
+
+    assert(vec9[0] == 88);
+    assert(vec9[1] == 77);
+    assert(vec9[2] == 66);
+    assert(vec9[3] == 55);
+    assert(vec9[4] == 44);
 
     //std::vector<int> v(50);
     //std::vector<int> v(50, 33);
