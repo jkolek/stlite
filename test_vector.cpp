@@ -5,21 +5,9 @@
 #include <assert.h>
 #include <vector>
 
-/*void print_int_list(LinkedList<int> &lst)
-{
-    LinkedListIterator<int> *iter = lst.create_iterator();
-    iter->first();
-    while (!iter->is_end())
-    {
-        std::cout << iter->get_current() << "  ";
-        iter->next();
-    }
-    std::cout << std::endl;
-}*/
-
 int main()
 {
-    Vector<int> vec;
+    stlite::Vector<int> vec;
 
     assert(vec.empty() == true);
     assert(vec.size() == 0);
@@ -59,26 +47,26 @@ int main()
     assert(data[4] == 3);
     assert(data[6] == 5);
 
-    Vector<int> vec2;
+    stlite::Vector<int> vec2;
 
-    assert(vec.capacity() == BLOCK_SIZE);
+    assert(vec.capacity() == stlite::vector_block_size);
 
     for (unsigned i = 0; i < 250; i++)
         vec2.push_back(i);
 
-    assert(vec2.capacity() == (BLOCK_SIZE * 3));
+    assert(vec2.capacity() == (stlite::vector_block_size * 3));
 
     for (unsigned i = 0; i < 250; i++)
         assert(vec2[i] == i);
 
     assert(vec2.max_size() == (unsigned) - 1);
 
-    Vector<int> vec3(80);
+    stlite::Vector<int> vec3(80);
 
     assert(vec3.capacity() == 80);
     assert(vec3.size() == 80);
 
-    Vector<int> vec4(25, 33);
+    stlite::Vector<int> vec4(25, 33);
 
     assert(vec4.capacity() == 25);
     assert(vec4.size() == 25);
@@ -99,13 +87,11 @@ int main()
     vec.push_back(15);
     vec.push_back(16);
 
-    VectorIterator<int> *iter = vec.create_iterator();
-    iter->first();
     unsigned n = 10;
-    while (!iter->is_end())
+    stlite::Vector<int>::Iterator it;
+    for (it = vec.begin(); it != vec.end(); ++it)
     {
-        assert(iter->get_current() == n);
-        iter->next();
+        assert(*it == n);
         n++;
     }
 
@@ -113,8 +99,8 @@ int main()
     int arr[arr_size] = { 44, 55, 66, 77, 88 };
 
     // Move constructor test
-    Vector<int> *tmp1 = new Vector<int>(arr, arr_size);
-    Vector<int> vec5(std::move(*tmp1));
+    stlite::Vector<int> *tmp1 = new stlite::Vector<int>(arr, arr_size);
+    stlite::Vector<int> vec5(std::move(*tmp1));
     delete tmp1;
 
     assert(vec5.size() == arr_size);
@@ -123,8 +109,8 @@ int main()
     assert(vec5.back() == 88);
 
     // Move assignment operator test
-    Vector<int> *tmp2 = new Vector<int>(arr, arr_size);
-    Vector<int> vec6;
+    stlite::Vector<int> *tmp2 = new stlite::Vector<int>(arr, arr_size);
+    stlite::Vector<int> vec6;
     vec6 = std::move(*tmp2);
     delete tmp2;
 
@@ -134,8 +120,8 @@ int main()
     assert(vec6.back() == 88);
 
     // Copy constructor test
-    Vector<int> *tmp3 = new Vector<int>(arr, arr_size);
-    Vector<int> vec7(*tmp3);
+    stlite::Vector<int> *tmp3 = new stlite::Vector<int>(arr, arr_size);
+    stlite::Vector<int> vec7(*tmp3);
     delete tmp3;
 
     assert(vec7.size() == arr_size);
@@ -144,8 +130,8 @@ int main()
     assert(vec7.back() == 88);
 
     // Copy assignment operator test
-    Vector<int> *tmp4 = new Vector<int>(arr, arr_size);
-    Vector<int> vec8;
+    stlite::Vector<int> *tmp4 = new stlite::Vector<int>(arr, arr_size);
+    stlite::Vector<int> vec8;
     vec8 = *tmp4;
     delete tmp4;
 
@@ -154,9 +140,20 @@ int main()
     assert(vec8.front() == 44);
     assert(vec8.back() == 88);
 
+    it = vec8.begin();
+    assert(*it == 44);
+    ++it;
+    assert(*it == 55);
+    it++;
+    assert(*it == 66);
+
+    assert(*(it++) == 66);
+
+    assert(*(++it) == 88);
+
     // Test reverse
 
-    Vector<int> vec9(arr, arr_size);
+    stlite::Vector<int> vec9(arr, arr_size);
     vec9.reverse();
 
     assert(vec9[0] == 88);

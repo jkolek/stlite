@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// High-performance generic linked list - header file
+// STLite linked list - header file
 // Copyright (c) 2017 Jozef Kolek <jkolek@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,23 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef LINKEDLIST_H
-#define LINKEDLIST_H
+#ifndef LIST_H
+#define LIST_H
+
+namespace stlite {
 
 template <class T>
-class LinkedListIterator;
-
-template <class T>
-struct Element
+class List
 {
-    T value;
-    struct Element *next = nullptr;
-    Element(T v) : value(v) {}
-};
+    struct Element
+    {
+        T value;
+        struct Element *next = nullptr;
+        Element(T v) : value(v) {}
+    };
 
-template <class T>
-class LinkedList
-{
     //
     //                                 _lst
     //  +---+   +---+   +---+   +---+    |
@@ -48,27 +46,75 @@ class LinkedList
     //    +-----------------------+
     //
 
-    Element<T> *_lst = nullptr;
+    Element *_lst = nullptr;
     unsigned _size = 0;
 
-    friend class LinkedListIterator<T>;
-
 public:
-    LinkedList() {}
+    List() {}
 
     // This constructor creates list from the given array
-    LinkedList(T *arr, unsigned len);
+    List(T *arr, unsigned len);
 
-    LinkedList(const LinkedList<T> &other); // Copy constructor
-    LinkedList(LinkedList<T> &&other);      // Move constructor
+    List(const List<T> &other); // Copy constructor
+    List(List<T> &&other);      // Move constructor
 
-    ~LinkedList() { clear(); }              // Destructor
+    ~List() { clear(); }              // Destructor
 
     // Copy assignment operator
-    LinkedList<T>& operator=(const LinkedList<T> &other);
+    List<T>& operator=(const List<T> &other);
 
     // Move assignment operator
-    LinkedList<T>& operator=(LinkedList<T> &&other);
+    List<T>& operator=(List<T> &&other);
+
+    // Iterators
+    class Iterator
+    {
+        // This pointer points to previous Element of the current Element.
+        // This way is more practical when inserting and erasing Elements.
+        Element *_prev;
+        friend class List;
+    public:
+        Iterator() {}
+
+        Iterator(Element *e)
+        {
+            _prev = e;
+        }
+
+        // Prefix increment operator
+        Iterator & operator++()
+        {
+            _prev = _prev->next;
+            return *this;
+        }
+
+        // Postfix increment operator
+        Iterator operator++(int)
+        {
+            Iterator tmp = *this;
+            _prev = _prev->next;
+            return tmp;
+        }
+
+        T & operator*()
+        {
+            return _prev->next->value;
+        }
+
+        bool operator==(Iterator other)
+        {
+            return other._prev->next == _prev->next;
+        }
+
+        bool operator!=(Iterator other)
+        {
+            return other._prev->next != _prev->next;
+        }
+    };
+
+    Iterator begin() { return Iterator(_lst); }
+    // TODO: This is invalid end
+    Iterator end() { return Iterator(_lst); }
 
     // Capacity
     bool empty() { return _lst == nullptr; }
@@ -85,33 +131,30 @@ public:
     void push_front(T value);
     bool pop_front();
     bool pop_back();
-    void append(const LinkedList &other);
+    void insert(Iterator &pos, const T &value);
+    void erase(Iterator &pos);
+    void append(const List &other);
     void clear();
 
     // Operations
     bool remove(T value);
     bool remove_pos(unsigned pos);
     void reverse();
-
-    LinkedListIterator<T> *create_iterator()
-    {
-        return new LinkedListIterator<T>(this);
-    }
 };
 
 //
-// Linked list iterator class
+// Linked list Iterator class
 //
 
-template <class T>
-class LinkedListIterator
+/*template <class T>
+class listIterator
 {
-    LinkedList<T> *_list;
-    Element<T> *_current = nullptr;
+    list<T> *_list;
+    Element *_current = nullptr;
     bool _next_is_end = false;
 
 public:
-    LinkedListIterator(LinkedList<T> *ls) : _list(ls) {}
+    listIterator(list<T> *ls) : _list(ls) {}
 
     void first()
     {
@@ -137,7 +180,7 @@ public:
         if (_next_is_end)
             return true;
 
-        // There is one more element to iterate
+        // There is one more Element to iterate
         if (_current == _list->_lst)
             _next_is_end = true;
 
@@ -149,8 +192,10 @@ public:
         if (_current)
             return _current->value;
     }
-};
+};*/
 
-#include "linkedlist.cpp"
+#include "list.cpp"
+
+};
 
 #endif

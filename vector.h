@@ -24,10 +24,11 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#define BLOCK_SIZE 100
+#include <algorithm>
 
-template <class T>
-class VectorIterator;
+namespace stlite {
+
+constexpr unsigned vector_block_size = 100;
 
 template <class T>
 class Vector
@@ -36,8 +37,6 @@ class Vector
     unsigned _max_size = -1;
     unsigned _capacity = 0;
     unsigned _size = 0;
-
-    friend class VectorIterator<T>;
 
     void allocate_data(unsigned capacity)
     {
@@ -79,6 +78,54 @@ public:
     Vector<T>& operator=(const Vector &other); // Copy assignment operator
     Vector<T>& operator=(Vector &&other);      // Move assignment operator
 
+    // Iterators
+    class Iterator
+    {
+        T *_data = nullptr;
+        unsigned _current = -1;
+    public:
+        Iterator() {}
+
+        Iterator(T *data, unsigned n)
+        {
+            _data = data;
+            _current = n;
+        }
+
+        // Prefix increment operator
+        Iterator & operator++()
+        {
+            _current++;
+            return *this;
+        }
+
+        // Postfix increment operator
+        Iterator operator++(int)
+        {
+            Iterator tmp = *this;
+            _current++;
+            return tmp;
+        }
+
+        T & operator*()
+        {
+            return _data[_current];
+        }
+
+        bool operator==(Iterator other)
+        {
+            return other._current == _current;
+        }
+
+        bool operator!=(Iterator other)
+        {
+            return other._current != _current;
+        }
+    };
+    Iterator begin() { return Iterator(_data, 0); }
+    // TODO: This is invalid end
+    Iterator end() { return Iterator(nullptr, _size); }
+
     // Capacity
     unsigned size() { return _size; }
     unsigned max_size() { return _max_size; }
@@ -100,55 +147,10 @@ public:
 
     // Operations
     void reverse();
-
-    VectorIterator<T> *create_iterator()
-    {
-        return new VectorIterator<T>(this);
-    }
-};
-
-//
-// Vector iterator class
-//
-
-template <class T>
-class VectorIterator
-{
-    Vector<T> *_vector = nullptr;
-    unsigned _current = -1;
-
-public:
-    VectorIterator(Vector<T> *vec) : _vector(vec) {}
-
-    void first()
-    {
-        if (!_vector)
-            return;
-        _current = 0;
-    }
-
-    void next()
-    {
-        if (!_vector)
-            return;
-
-        _current++;
-    }
-
-    bool is_end()
-    {
-        if (!_vector)
-            return false;
-
-        return _current == _vector->_size;
-    }
-
-    T get_current()
-    {
-        return _vector->_data[_current];
-    }
 };
 
 #include "vector.cpp"
+
+};
 
 #endif

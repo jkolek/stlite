@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// High-performance generic linked list - implementation file
+// STLite linked list - implementation file
 // Copyright (c) 2017 Jozef Kolek <jkolek@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 template <class T>
-LinkedList<T>::LinkedList(T *arr, unsigned len)
+List<T>::List(T *arr, unsigned len)
 {
     for (unsigned i = 0; i < len; i++)
         push_back(arr[i]);
@@ -30,12 +30,12 @@ LinkedList<T>::LinkedList(T *arr, unsigned len)
 
 // Copy constructor
 template <class T>
-LinkedList<T>::LinkedList(const LinkedList<T> &other)
+List<T>::List(const List<T> &other)
 {
     if (&other != this && other._lst)
     {
         // Pointer to the first element
-        Element<T> *p = other._lst->next;
+        Element *p = other._lst->next;
         while (p != other._lst)
         {
             push_back(p->value);
@@ -48,7 +48,7 @@ LinkedList<T>::LinkedList(const LinkedList<T> &other)
 
 // Move constructor
 template <class T>
-LinkedList<T>::LinkedList(LinkedList<T> &&other)
+List<T>::List(List<T> &&other)
 {
     if (&other != this)
     {
@@ -62,14 +62,14 @@ LinkedList<T>::LinkedList(LinkedList<T> &&other)
 
 // Copy assignment operator
 template <class T>
-LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T> &other)
+List<T>& List<T>::operator=(const List<T> &other)
 {
     if (&other != this && other._lst)
     {
         clear();
 
         // Pointer to the first element
-        Element<T> *p = other._lst->next;
+        Element *p = other._lst->next;
         while (p != other._lst)
         {
             push_back(p->value);
@@ -83,7 +83,7 @@ LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T> &other)
 
 // Move assignment operator
 template <class T>
-LinkedList<T>& LinkedList<T>::operator=(LinkedList &&other)
+List<T>& List<T>::operator=(List &&other)
 {
     if (&other != this)
     {
@@ -98,14 +98,14 @@ LinkedList<T>& LinkedList<T>::operator=(LinkedList &&other)
 }
 
 template <class T>
-T LinkedList<T>::get(unsigned pos)
+T List<T>::get(unsigned pos)
 {
     if (_lst)
     {
         unsigned n = 0;
 
         // Pointer to the first element
-        Element<T> *p = _lst->next;
+        Element *p = _lst->next;
         while (n != pos && p != _lst)
         {
             p = p->next;
@@ -119,9 +119,9 @@ T LinkedList<T>::get(unsigned pos)
 
 // Append element to end of the list
 template <class T>
-void LinkedList<T>::push_back(T value)
+void List<T>::push_back(T value)
 {
-    Element<T> *e = new Element<T>(value);
+    Element *e = new Element(value);
 
     if (!_lst)
     {
@@ -139,9 +139,9 @@ void LinkedList<T>::push_back(T value)
 
 // Insert element at beginning of the list
 template <class T>
-void LinkedList<T>::push_front(T value)
+void List<T>::push_front(T value)
 {
-    Element<T> *e = new Element<T>(value);
+    Element *e = new Element(value);
 
     if (!_lst)
     {
@@ -163,7 +163,7 @@ void LinkedList<T>::push_front(T value)
 //     list is efficient and easy, just remove _lst->next which points to the
 //     first element of the list.
 template <class T>
-bool LinkedList<T>::pop_front()
+bool List<T>::pop_front()
 {
     if (!_lst)
         return false;
@@ -176,7 +176,7 @@ bool LinkedList<T>::pop_front()
     }
     else
     {
-        Element<T> *old = _lst->next;
+        Element *old = _lst->next;
         _lst->next = _lst->next->next;
         delete old;
         _size--;
@@ -186,7 +186,7 @@ bool LinkedList<T>::pop_front()
 }
 
 template <class T>
-bool LinkedList<T>::pop_back()
+bool List<T>::pop_back()
 {
     if (!_lst)
         return false;
@@ -204,7 +204,7 @@ bool LinkedList<T>::pop_back()
         // We need to traverse entire list to get "next" pointer that points to
         // the _lst.
 
-        Element<T> *p = _lst->next;
+        Element *p = _lst->next;
         while (p->next != _lst)
             p = p->next;
         p->next = _lst->next;
@@ -216,14 +216,42 @@ bool LinkedList<T>::pop_back()
     return true;
 }
 
+template <class T>
+void List<T>::insert(Iterator &pos, const T &value)
+{
+    if (pos._prev)
+    {
+        Element *e = new Element(value);
+        e->next = pos._prev->next;
+        pos._prev->next = e;
+        pos._prev = pos._prev->next;
+    }
+    else
+    {
+        push_back(value);
+        pos._prev = _lst;
+    }
+}
+
+template <class T>
+void List<T>::erase(Iterator &pos)
+{
+    if (pos._prev)
+    {
+        Element *old = pos._prev->next;
+        pos._prev = pos._prev->next;
+        delete old;
+    }
+}
+
 // Append elements of other to end of the list
 template <class T>
-void LinkedList<T>::append(const LinkedList &other)
+void List<T>::append(const List &other)
 {
     if (other._lst)
     {
         // Pointer to the first element
-        Element<T> *p = other._lst->next;
+        Element *p = other._lst->next;
         while (p != other._lst)
         {
             push_back(p->value);
@@ -235,16 +263,16 @@ void LinkedList<T>::append(const LinkedList &other)
 }
 
 template <class T>
-void LinkedList<T>::clear()
+void List<T>::clear()
 {
     if (!_lst)
         return;
 
-    Element<T> *p = _lst;
+    Element *p = _lst;
 
     while (p->next != _lst)
     {
-        Element<T> *old = _lst->next;
+        Element *old = _lst->next;
         _lst->next = _lst->next->next;
         delete old;
     }
@@ -257,7 +285,7 @@ void LinkedList<T>::clear()
 // Remove element with the value from the list.
 // Return true if element has been removed, false otherwise.
 template <class T>
-bool LinkedList<T>::remove(T value)
+bool List<T>::remove(T value)
 {
     if (!_lst)
         return false;
@@ -275,7 +303,7 @@ bool LinkedList<T>::remove(T value)
     }
 
     // Pointer to the last element
-    Element<T> *p = _lst;
+    Element *p = _lst;
 
     while (p->next->value != value &&  p->next != _lst)
         p = p->next;
@@ -285,7 +313,7 @@ bool LinkedList<T>::remove(T value)
         if (p->next == _lst)
             _lst = p;
 
-        Element<T> *old = p->next;
+        Element *old = p->next;
         p->next = p->next->next;
         delete old;
         _size--;
@@ -299,7 +327,7 @@ bool LinkedList<T>::remove(T value)
 // Remove element at the position "pos" in the list.
 // Return true if element has been removed, false otherwise.
 template <class T>
-bool LinkedList<T>::remove_pos(unsigned pos)
+bool List<T>::remove_pos(unsigned pos)
 {
     if (!_lst)
         return false;
@@ -310,7 +338,7 @@ bool LinkedList<T>::remove_pos(unsigned pos)
 }
 
 template <class T>
-void LinkedList<T>::reverse()
+void List<T>::reverse()
 {
     // TODO: Implement
 }

@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <algorithm>
-
 template <class T>
 Vector<T>::Vector(T *arr, unsigned len)
 {
@@ -98,11 +96,11 @@ void Vector<T>::push_back(T value)
 {
     if (!_data)
     {
-        allocate_data(BLOCK_SIZE);
+        allocate_data(vector_block_size);
     }
     else if (_size >= _capacity)
     {
-        unsigned new_capacity = _capacity + BLOCK_SIZE;
+        unsigned new_capacity = _capacity + vector_block_size;
 
         if (new_capacity > _max_size)
             return;

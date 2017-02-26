@@ -1,12 +1,12 @@
-#include "linkedlist.h"
+#include "list.h"
 
 #include <string>
 #include <iostream>
 #include <assert.h>
 
-void print_int_list(LinkedList<int> &lst)
+/*void print_int_list(stlite::List<int> &lst)
 {
-    LinkedListIterator<int> *iter = lst.create_iterator();
+    stlite::Listiterator<int> *iter = lst.create_iterator();
     iter->first();
     while (!iter->is_end())
     {
@@ -14,11 +14,13 @@ void print_int_list(LinkedList<int> &lst)
         iter->next();
     }
     std::cout << std::endl;
-}
+}*/
+
+#include <list>
 
 int main()
 {
-    LinkedList<int> ls;
+    stlite::List<int> ls;
 
     assert(ls.empty() == true);
     assert(ls.size() == 0);
@@ -62,7 +64,7 @@ int main()
     assert(ls.get(3) == 3);
 
     // Copy constructor test
-    LinkedList<int> ls3 = ls;
+    stlite::List<int> ls3 = ls;
 
     assert(ls3.front() == 22);
     assert(ls3.back() == 3);
@@ -71,7 +73,7 @@ int main()
     assert(ls3.get(2) == 1);
     assert(ls3.get(3) == 3);
 
-    LinkedList<int> ls4;
+    stlite::List<int> ls4;
     // Copy assignment operator test
     ls4 = ls3;
 
@@ -84,7 +86,7 @@ int main()
 
     constexpr unsigned arr_size = 5;
     int arr[arr_size] = { 44, 55, 66, 77, 88 };
-    LinkedList<int> ls5(arr, arr_size);
+    stlite::List<int> ls5(arr, arr_size);
 
     assert(ls5.size() == arr_size);
     assert(ls5.front() == 44);
@@ -112,15 +114,15 @@ int main()
     ls.push_back(15);
     ls.push_back(16);
 
-    LinkedListIterator<int> *iter = ls.create_iterator();
-    iter->first();
     unsigned n = 10;
+    /*stlite::Listiterator<int> *iter = ls.create_iterator();
+    iter->first();
     while (!iter->is_end())
     {
         assert(iter->get_current() == n);
         iter->next();
         n++;
-    }
+    }*/
 
     ls.pop_front();
     ls.pop_back();
@@ -129,8 +131,8 @@ int main()
     assert(ls.back() == 15);
 
     // Move constructor test
-    LinkedList<int> *tmp1 = new LinkedList<int>(arr, arr_size);
-    LinkedList<int> ls6(std::move(*tmp1));
+    stlite::List<int> *tmp1 = new stlite::List<int>(arr, arr_size);
+    stlite::List<int> ls6(std::move(*tmp1));
     delete tmp1;
 
     assert(ls6.size() == arr_size);
@@ -138,8 +140,8 @@ int main()
     assert(ls6.back() == 88);
 
     // Move assignment operator test
-    LinkedList<int> *tmp2 = new LinkedList<int>(arr, arr_size);
-    LinkedList<int> ls7;
+    stlite::List<int> *tmp2 = new stlite::List<int>(arr, arr_size);
+    stlite::List<int> ls7;
     ls7 = std::move(*tmp2);
     delete tmp2;
 
@@ -148,8 +150,8 @@ int main()
     assert(ls7.back() == 88);
 
     // Copy constructor test 2
-    LinkedList<int> *tmp3 = new LinkedList<int>(arr, arr_size);
-    LinkedList<int> ls8(*tmp3);
+    stlite::List<int> *tmp3 = new stlite::List<int>(arr, arr_size);
+    stlite::List<int> ls8(*tmp3);
     delete tmp3;
 
     assert(ls8.size() == arr_size);
@@ -157,14 +159,51 @@ int main()
     assert(ls8.back() == 88);
 
     // Copy assignment operator test 2
-    LinkedList<int> *tmp4 = new LinkedList<int>(arr, arr_size);
-    LinkedList<int> ls9;
+    stlite::List<int> *tmp4 = new stlite::List<int>(arr, arr_size);
+    stlite::List<int> ls9;
     ls9 = *tmp4;
     delete tmp4;
 
     assert(ls9.size() == arr_size);
     assert(ls9.front() == 44);
     assert(ls9.back() == 88);
+
+    stlite::List<int>::Iterator it;
+    it = ls9.begin();
+    assert(*it == 44);
+    ++it;
+    assert(*it == 55);
+    it++;
+    assert(*it == 66);
+
+    assert(*(it++) == 66);
+
+    assert(*(++it) == 88);
+
+    it = ls9.begin();
+    ls9.insert(it, 33);
+    assert(*(it++) == 44);
+
+    for (it = ls9.begin(); it != ls9.end(); ++it)
+    {
+        std::cout << *it << std::endl;
+    }
+
+    stlite::List<int> ls10;
+    it = ls10.begin();
+
+    ls10.insert(it, 100);
+    assert(*it == 100);
+
+    // TODO: test List::erase()
+
+    //std::list<int> mylist;
+    //std::list<int>::iterator mit;
+    //mylist.push_back(90);
+    //mit = mylist.begin();
+    //mylist.insert(mit, 50);
+    //mit--;
+    //std::cout << *mit << std::endl;
 
     return 0;
 }
