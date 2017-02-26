@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// High-performance generic vector - header file
+// STLite vector - header file
 // Copyright (c) 2017 Jozef Kolek <jkolek@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -65,15 +65,10 @@ public:
     // This constructor creates list from the given array
     Vector(T *arr, unsigned len);
 
-    Vector(const Vector &other);         // Copy constructor
-    Vector(Vector &&other);              // Move constructor
+    Vector(const Vector &other);               // Copy constructor
+    Vector(Vector &&other);                    // Move constructor
 
-    // Destructor
-    ~Vector()
-    {
-        if (_data)
-            delete [] _data;
-    }
+    ~Vector() { if (_data) delete [] _data; }  // Destructor
 
     Vector<T>& operator=(const Vector &other); // Copy assignment operator
     Vector<T>& operator=(Vector &&other);      // Move assignment operator

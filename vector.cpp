@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// High-performance generic vector - implementation file
+// STLite vector - implementation file
 // Copyright (c) 2017 Jozef Kolek <jkolek@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy

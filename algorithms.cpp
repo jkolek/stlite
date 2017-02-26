@@ -77,8 +77,23 @@ void quick_sort(T *arr, unsigned len)
 }
 
 template <class T>
-int binary_search(T *arr, unsigned len)
+static int binary_search_helper(T x, T *arr, int lo, int hi)
 {
-    // TODO: Implement
+    if (lo < hi)
+    {
+        int middle = (lo + hi) / 2;
+        if (arr[middle] == x)
+            return middle;
+        else if (arr[middle] < x)
+            return binary_search_helper(x, arr, middle+1, hi);
+        else
+            return binary_search_helper(x, arr, lo, middle-1);
+    }
     return -1;
+}
+
+template <class T>
+int binary_search(T x, T *arr, unsigned len)
+{
+    return binary_search_helper(x, arr, 0, len-1);
 }

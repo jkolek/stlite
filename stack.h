@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// STLite algorithms - header file
+// STLite stack
 // Copyright (c) 2017 Jozef Kolek <jkolek@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,23 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef STACK_H
+#define STACK_H
+
+#include "vector.h"
+
 namespace stlite {
 
 template <class T>
-void min(T a, T b);
+class Stack
+{
+    Vector<T> _data;
 
-template <class T>
-void max(T a, T b);
+public:
+    Stack() {}
 
-template <class T>
-void swap(T &a, T &b);
+    Stack(const Stack &other) {}                 // Copy constructor
+    Stack(Stack &&other) {}                      // Move constructor
 
-template <class T>
-void quick_sort(T *arr, unsigned len);
+    ~Stack() {}                                // Destructor
 
-template <class T>
-int binary_search(T x, T *arr, unsigned len);
+    //Stack<T>& operator=(const Stack &other); // Copy assignment operator
+    //Stack<T>& operator=(Stack &&other);      // Move assignment operator
 
-#include "algorithms.cpp"
+    // Capacity
+    bool empty() { return _data.empty(); }
+    unsigned size() { return _data.size(); }
+
+    // Element access
+    T top() { return _data.back(); }
+
+    // Modifiers
+    void push(T value) { _data.push_back(value); }
+    bool pop() { _data.pop_back(); };
+};
 
 };
+
+#endif

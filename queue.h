@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// STLite algorithms - header file
+// STLite queue
 // Copyright (c) 2017 Jozef Kolek <jkolek@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,23 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef QUEUE_H
+#define QUEUE_H
+
+#include "list.h"
+
 namespace stlite {
 
 template <class T>
-void min(T a, T b);
+class Queue
+{
+    List<T> _data;
 
-template <class T>
-void max(T a, T b);
+public:
+    Queue() {}
 
-template <class T>
-void swap(T &a, T &b);
+    //Queue(const Queue<T> &other);               // Copy constructor
+    //Queue(Queue<T> &&other);                    // Move constructor
 
-template <class T>
-void quick_sort(T *arr, unsigned len);
+    ~Queue() {}                      // Destructor
 
-template <class T>
-int binary_search(T x, T *arr, unsigned len);
+    //Queue<T>& operator=(const Queue<T> &other); // Copy assignment operator
+    //Queue<T>& operator=(Queue<T> &&other);      // Move assignment operator
 
-#include "algorithms.cpp"
+    // Capacity
+    bool empty() { return _data.empty(); }
+    unsigned size() { return _data.size(); }
+
+    // Element access
+    T front() { return _data.front(); }
+    T back() { return _data.back(); }
+
+    // Modifiers
+    void push(T value) { _data.push_back(value); }
+    bool pop() { _data.pop_front(); }
+};
 
 };
+
+#endif

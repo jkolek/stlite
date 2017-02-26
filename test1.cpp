@@ -119,4 +119,6 @@ int main()
     {
         std::cout << a[i] << std::endl;
     }
+
+    std::cout << std::endl << stlite::binary_search(5, a, asize) << std::endl;
 }

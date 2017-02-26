@@ -55,16 +55,14 @@ public:
     // This constructor creates list from the given array
     List(T *arr, unsigned len);
 
-    List(const List<T> &other); // Copy constructor
-    List(List<T> &&other);      // Move constructor
+    List(const List<T> &other);               // Copy constructor
+    List(List<T> &&other);                    // Move constructor
 
-    ~List() { clear(); }              // Destructor
+    ~List() { clear(); }                      // Destructor
 
-    // Copy assignment operator
-    List<T>& operator=(const List<T> &other);
+    List<T>& operator=(const List<T> &other); // Copy assignment operator
 
-    // Move assignment operator
-    List<T>& operator=(List<T> &&other);
+    List<T>& operator=(List<T> &&other);      // Move assignment operator
 
     // Iterators
     class Iterator
