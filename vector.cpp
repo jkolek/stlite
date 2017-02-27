@@ -145,11 +145,5 @@ void Vector<T>::reverse()
     unsigned j = _size-1;
 
     while (i < j)
-    {
-        T tmp = _data[i];
-        _data[i] = _data[j];
-        _data[j] = tmp;
-        i++;
-        j--;
-    }
+        swap(_data[i++], _data[j--]);
 }

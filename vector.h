@@ -24,6 +24,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "algorithms.h"
+
 #include <algorithm>
 
 namespace stlite {
