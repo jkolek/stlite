@@ -82,12 +82,7 @@ public:
         unsigned _current = -1;
     public:
         Iterator() {}
-
-        Iterator(T *data, unsigned n)
-        {
-            _data = data;
-            _current = n;
-        }
+        Iterator(T *data, unsigned n) : _data(data), _current(n) {}
 
         // Prefix increment operator
         Iterator & operator++()

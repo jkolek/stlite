@@ -98,7 +98,7 @@ List<T>& List<T>::operator=(List &&other)
 }
 
 template <class T>
-T List<T>::get(unsigned pos)
+T List<T>::at(unsigned pos)
 {
     if (_lst)
     {

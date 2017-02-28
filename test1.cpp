@@ -77,9 +77,9 @@ int main()
     print_int_list(ls);
     std::cout << ls.size() << std::endl;
 
-    std::cout << "ls2.get(0) == " << ls2.get(0) << std::endl;
-    std::cout << "ls2.get(3) == " << ls2.get(3) << std::endl;
-    std::cout << "ls2.get(5) == " << ls2.get(5) << std::endl;
+    std::cout << "ls2.at(0) == " << ls2.at(0) << std::endl;
+    std::cout << "ls2.at(3) == " << ls2.at(3) << std::endl;
+    std::cout << "ls2.at(5) == " << ls2.at(5) << std::endl;
     std::cout << "ls2.front() == " << ls2.front() << std::endl;
     std::cout << "ls2.back() == " << ls2.back() << std::endl;
 
@@ -109,7 +109,7 @@ int main()
     ls6.push_back("world");
     ls6.print();
 
-    std::cout << "ls6.get(5) == " << ls6.get(5) << std::endl;*/
+    std::cout << "ls6.at(5) == " << ls6.at(5) << std::endl;*/
 
     constexpr unsigned asize = 5;
     int a[asize] = { 5, 2, 3, 1, 7 };

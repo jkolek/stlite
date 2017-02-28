@@ -70,19 +70,32 @@ public:
         // This pointer points to previous Element of the current Element.
         // This way is more practical when inserting and erasing Elements.
         Element *_prev;
+        bool _is_end = false;
+        bool _next_is_end = false;
         friend class List;
+
+        bool test_end(const Iterator &other)
+        {
+            if (_next_is_end)
+                return true;
+
+            if (_prev->next == other._prev)
+                _next_is_end = true;
+
+            return false;
+        }
+
     public:
         Iterator() {}
 
-        Iterator(Element *e)
-        {
-            _prev = e;
-        }
+        Iterator(Element *e) : _prev(e) {}
+        Iterator(Element *e, bool is_end) : _prev(e), _is_end(is_end) {}
 
         // Prefix increment operator
         Iterator & operator++()
         {
-            _prev = _prev->next;
+            if (_prev)
+                _prev = _prev->next;
             return *this;
         }
 
@@ -90,29 +103,42 @@ public:
         Iterator operator++(int)
         {
             Iterator tmp = *this;
-            _prev = _prev->next;
+            if (_prev)
+                _prev = _prev->next;
             return tmp;
         }
 
         T & operator*()
         {
-            return _prev->next->value;
+            if (_prev)
+                return _prev->next->value;
         }
 
         bool operator==(Iterator other)
         {
+            if (!_prev || !other._prev)
+                return false;
+
+            if (other._is_end)
+                return test_end(other);
+
             return other._prev->next == _prev->next;
         }
 
         bool operator!=(Iterator other)
         {
+            if (!_prev || !other._prev)
+                return false;
+
+            if (other._is_end)
+                return !test_end(other);
+
             return other._prev->next != _prev->next;
         }
     };
 
     Iterator begin() { return Iterator(_lst); }
-    // TODO: This is invalid end
-    Iterator end() { return Iterator(_lst); }
+    Iterator end() { return Iterator(_lst, true); }
 
     // Capacity
     bool empty() { return _lst == nullptr; }
@@ -122,7 +148,7 @@ public:
     // If the list is empty, the return value of these functions is undefined
     T front() { if (_lst) return _lst->next->value; }
     T back() { if (_lst) return _lst->value; }
-    T get(unsigned pos);
+    T at(unsigned pos);
 
     // Modifiers
     void push_back(T value);
@@ -139,58 +165,6 @@ public:
     bool remove_pos(unsigned pos);
     void reverse();
 };
-
-//
-// Linked list Iterator class
-//
-
-/*template <class T>
-class listIterator
-{
-    list<T> *_list;
-    Element *_current = nullptr;
-    bool _next_is_end = false;
-
-public:
-    listIterator(list<T> *ls) : _list(ls) {}
-
-    void first()
-    {
-        if (!_list)
-            return;
-        _current = _list->_lst->next;
-        _next_is_end = false;
-    }
-
-    void next()
-    {
-        if (!_current)
-            return;
-
-        _current = _current->next;
-    }
-
-    bool is_end()
-    {
-        if (!_list)
-            return false;
-
-        if (_next_is_end)
-            return true;
-
-        // There is one more Element to iterate
-        if (_current == _list->_lst)
-            _next_is_end = true;
-
-        return false;
-    }
-
-    T get_current()
-    {
-        if (_current)
-            return _current->value;
-    }
-};*/
 
 #include "list.cpp"
 

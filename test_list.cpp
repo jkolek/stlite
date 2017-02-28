@@ -43,9 +43,9 @@ int main()
     assert(ls.size() == 5);
     assert(ls.front() == 0);
     assert(ls.back() == 4);
-    assert(ls.get(0) == 0);
-    assert(ls.get(2) == 2);
-    assert(ls.get(4) == 4);
+    assert(ls.at(0) == 0);
+    assert(ls.at(2) == 2);
+    assert(ls.at(4) == 4);
 
     ls.push_front(22);
     ls.push_front(33);
@@ -59,9 +59,9 @@ int main()
     assert(ls.front() == 22);
     assert(ls.back() == 3);
     assert(ls.size() == 4);
-    assert(ls.get(0) == 22);
-    assert(ls.get(2) == 1);
-    assert(ls.get(3) == 3);
+    assert(ls.at(0) == 22);
+    assert(ls.at(2) == 1);
+    assert(ls.at(3) == 3);
 
     // Copy constructor test
     stlite::List<int> ls3 = ls;
@@ -69,9 +69,9 @@ int main()
     assert(ls3.front() == 22);
     assert(ls3.back() == 3);
     assert(ls3.size() == ls.size());
-    assert(ls3.get(0) == 22);
-    assert(ls3.get(2) == 1);
-    assert(ls3.get(3) == 3);
+    assert(ls3.at(0) == 22);
+    assert(ls3.at(2) == 1);
+    assert(ls3.at(3) == 3);
 
     stlite::List<int> ls4;
     // Copy assignment operator test
@@ -80,9 +80,9 @@ int main()
     assert(ls4.front() == 22);
     assert(ls4.back() == 3);
     assert(ls4.size() == ls3.size());
-    assert(ls4.get(0) == 22);
-    assert(ls4.get(2) == 1);
-    assert(ls4.get(3) == 3);
+    assert(ls4.at(0) == 22);
+    assert(ls4.at(2) == 1);
+    assert(ls4.at(3) == 3);
 
     constexpr unsigned arr_size = 5;
     int arr[arr_size] = { 44, 55, 66, 77, 88 };
@@ -91,9 +91,9 @@ int main()
     assert(ls5.size() == arr_size);
     assert(ls5.front() == 44);
     assert(ls5.back() == 88);
-    assert(ls5.get(0) == 44);
-    assert(ls5.get(2) == 66);
-    assert(ls5.get(4) == 88);
+    assert(ls5.at(0) == 44);
+    assert(ls5.at(2) == 66);
+    assert(ls5.at(4) == 88);
 
     ls5.append(ls4);
 
@@ -184,11 +184,6 @@ int main()
     ls9.insert(it, 33);
     assert(*(it++) == 44);
 
-    for (it = ls9.begin(); it != ls9.end(); ++it)
-    {
-        std::cout << *it << std::endl;
-    }
-
     stlite::List<int> ls10;
     it = ls10.begin();
 
@@ -204,6 +199,22 @@ int main()
     //mylist.insert(mit, 50);
     //mit--;
     //std::cout << *mit << std::endl;
+
+    stlite::List<int> ls11;
+    ls11.push_back(10);
+
+    n = 10;
+    for (stlite::List<int>::Iterator it = ls11.begin(); it != ls11.end(); ++it)
+        assert(*it == n++);
+
+    ls11.push_back(11);
+    ls11.push_back(12);
+    ls11.push_back(13);
+    ls11.push_back(14);
+
+    n = 10;
+    for (stlite::List<int>::Iterator it = ls11.begin(); it != ls11.end(); ++it)
+        assert(*it == n++);
 
     return 0;
 }
