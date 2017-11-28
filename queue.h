@@ -26,7 +26,8 @@
 
 #include "list.h"
 
-namespace stlite {
+namespace stlite
+{
 
 template <class T>
 class Queue
@@ -57,6 +58,6 @@ public:
     bool pop() { _data.pop_front(); }
 };
 
-};
+} // namespace stlite
 
 #endif

@@ -26,7 +26,8 @@
 
 #include "vector.h"
 
-namespace stlite {
+namespace stlite
+{
 
 template <class T>
 class Stack
@@ -56,6 +57,6 @@ public:
     bool pop() { _data.pop_back(); };
 };
 
-};
+} // namespace stlite
 
 #endif

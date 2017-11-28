@@ -16,7 +16,7 @@ test_vector: vector.h
 	$(CXX) $(CXXFLAGS) test_vector.cpp -o test_vector
 
 test_set: set.h algorithms.h
-	$(CXX) $(CXXFLAGS) test_set.cpp algorithms.cpp -o test_set
+	$(CXX) $(CXXFLAGS) test_set.cpp -o test_set
 
 test_stack: stack.h
 	$(CXX) $(CXXFLAGS) test_stack.cpp -o test_stack

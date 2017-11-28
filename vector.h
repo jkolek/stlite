@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// STLite vector - header file
+// STLite vector
 // Copyright (c) 2017 Jozef Kolek <jkolek@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,7 +28,8 @@
 
 #include <algorithm>
 
-namespace stlite {
+namespace stlite
+{
 
 constexpr unsigned vector_block_size = 100;
 
@@ -40,6 +41,7 @@ class Vector
     unsigned _capacity = 0;
     unsigned _size = 0;
 
+    // TODO: Implement external allocator
     void allocate_data(unsigned capacity)
     {
         _capacity = capacity;
@@ -56,7 +58,7 @@ public:
         allocate_data(n);
     }
 
-    explicit Vector(unsigned n, const T& val)
+    explicit Vector(unsigned n, const T &val)
     {
         _size = n;
         allocate_data(n);
@@ -141,8 +143,137 @@ public:
     void reverse();
 };
 
-#include "vector.cpp"
+//====----------------------------------------------------------------------====
+// Implementations of methods
+//====----------------------------------------------------------------------====
 
-};
+template <class T>
+Vector<T>::Vector(T *arr, unsigned len)
+{
+    _size = len;
+    allocate_data(len);
+    std::copy(arr, arr + _size, _data);
+}
+
+// Copy constructor
+template <class T>
+Vector<T>::Vector(const Vector &other)
+{
+    _size = other._size;
+    allocate_data(other._size);
+    std::copy(other._data, other._data + _size, _data);
+}
+
+// Move constructor
+template <class T>
+Vector<T>::Vector(Vector &&other)
+{
+    if (&other != this)
+    {
+        _data = other._data;
+        _capacity = other._capacity;
+        _size = other._size;
+
+        other._data = nullptr;
+        other._capacity = 0;
+        other._size = 0;
+    }
+}
+
+// Copy assignment operator
+template <class T>
+Vector<T>& Vector<T>::operator=(const Vector &other)
+{
+    if (&other != this)
+    {
+        if (_data)
+            delete [] _data;
+
+        _size = other._size;
+        allocate_data(other._size);
+        std::copy(other._data, other._data + _size, _data);
+    }
+    return *this;
+}
+
+// Move assignment operator
+template <class T>
+Vector<T>& Vector<T>::operator=(Vector &&other)
+{
+    if (&other != this)
+    {
+        if (_data)
+            delete [] _data;
+
+        _data = other._data;
+        _capacity = other._capacity;
+        _size = other._size;
+
+        other._data = nullptr;
+        other._capacity = 0;
+        other._size = 0;
+    }
+    return *this;
+}
+
+// Append element to end of the list
+template <class T>
+void Vector<T>::push_back(T value)
+{
+    if (!_data)
+    {
+        allocate_data(vector_block_size);
+    }
+    else if (_size >= _capacity)
+    {
+        unsigned new_capacity = _capacity + vector_block_size;
+
+        if (new_capacity > _max_size)
+            return;
+
+        T *tmp = new T[new_capacity];
+        std::copy(_data, _data + _size, tmp);
+        delete [] _data;
+        _data = tmp;
+        _capacity = new_capacity;
+    }
+
+    _data[_size++] = value;
+}
+
+template <class T>
+bool Vector<T>::pop_back()
+{
+    if (_size > 0)
+        _size--;
+}
+
+// Append elements of other to end of the vector
+template <class T>
+void Vector<T>::append(const Vector &other)
+{
+    // TODO: Implement
+}
+
+template <class T>
+void Vector<T>::clear()
+{
+    _size = 0;
+}
+
+template <class T>
+void Vector<T>::reverse()
+{
+    if (_size == 0)
+        return;
+
+    unsigned i = 0;
+    unsigned j = _size-1;
+
+    while (i < j)
+        swap(_data[i++], _data[j--]);
+}
+
+} // namespace stlite
 
 #endif
