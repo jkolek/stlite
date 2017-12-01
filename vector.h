@@ -69,6 +69,8 @@ public:
     // This constructor creates list from the given array
     Vector(T *arr, unsigned len);
 
+    Vector(std::initializer_list<T> initlst);
+
     Vector(const Vector &other);               // Copy constructor
     Vector(Vector &&other);                    // Move constructor
 
@@ -116,6 +118,7 @@ public:
             return other._current != _current;
         }
     };
+
     Iterator begin() { return Iterator(_data, 0); }
     // TODO: This is invalid end
     Iterator end() { return Iterator(nullptr, _size); }
@@ -127,8 +130,17 @@ public:
     bool empty() { return _size == 0; }
 
     // Element access
-    T operator[](unsigned n) { return _data[n]; }
-    T at(unsigned n) { return _data[n]; }
+    // http://www.cplusplus.com/reference/vector/vector/operator[]/
+    T operator[](unsigned n) { return _data[n]; }  // TODO: Fix semantics
+
+    // http://www.cplusplus.com/reference/vector/vector/at/
+    T at(unsigned n)
+    {
+        if (n < _size)
+            return _data[n];
+        // TODO: Throw out_of_range exception
+    }
+
     T front() { return _data[0]; }
     T back() { return _data[_size-1]; }
     T *data() { return _data; }
@@ -138,6 +150,10 @@ public:
     bool pop_back();
     void append(const Vector &other);
     void clear();
+
+    // Allocator
+    // http://www.cplusplus.com/reference/vector/vector/get_allocator/
+    // get_allocator()
 
     // Operations
     void reverse();
@@ -153,6 +169,18 @@ Vector<T>::Vector(T *arr, unsigned len)
     _size = len;
     allocate_data(len);
     std::copy(arr, arr + _size, _data);
+}
+
+template <class T>
+Vector<T>::Vector(std::initializer_list<T> initlst)
+{
+    _size = initlst.size();
+    allocate_data(_size);
+
+    unsigned idx = 0;
+
+    for (auto x : initlst)
+        _data[idx++] = x;
 }
 
 // Copy constructor

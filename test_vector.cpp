@@ -34,7 +34,6 @@ int main()
     assert(vec.at(0) == -1);
     assert(vec.at(2) == 1);
     assert(vec.at(4) == 3);
-    assert(vec.at(6) == 5);
 
     assert(vec[0] == -1);
     assert(vec[2] == 1);
@@ -168,6 +167,15 @@ int main()
     //v.push_back(22);
     //std::cout << v.size() << std::endl;
     //std::cout << v.capacity() << std::endl;
+
+    // Initializer list test
+    stlite::Vector<int> vec10({ 44, 55, 66, 77, 88 });
+
+    assert(vec10.size() == 5);
+    assert(vec10.capacity() == 5);
+    assert(vec10.front() == 44);
+    assert(vec10.back() == 88);
+    assert(vec10[2] == 66);
 
     return 0;
 }
