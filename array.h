@@ -127,10 +127,10 @@ public:
 
     // Element access
     // http://www.cplusplus.com/reference/array/array/operator[]/
-    // TODO: We must be able to assign values via []:
+    // We must be able to assign values via []:
     //   arr[2] = 33;
-    T operator[](unsigned n) const { return _data[n]; }
-    T & operator[](unsigned n) { return _data[n]; }
+    T & operator[](int n) { return _data[n]; }
+    T operator[](int n) const { return _data[n]; }
 
     // http://www.cplusplus.com/reference/array/array/at/
     // TODO: We must be able to assign values via at():

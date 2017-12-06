@@ -131,7 +131,10 @@ public:
 
     // Element access
     // http://www.cplusplus.com/reference/vector/vector/operator[]/
-    T operator[](unsigned n) { return _data[n]; }  // TODO: Fix semantics
+    // We must be able to assign values via []:
+    //   arr[2] = 33;
+    T & operator[](int n) { return _data[n]; }
+    T operator[](int n) const { return _data[n]; }
 
     // http://www.cplusplus.com/reference/vector/vector/at/
     T at(unsigned n)

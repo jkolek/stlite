@@ -6,44 +6,32 @@
 
 int main()
 {
-    // stlite::Array<int> arr(5);
+    stlite::Array<int> arr(5);
 
     // assert(arr.empty() == true);
-    // assert(arr.size() == 5);
+    assert(arr.size() == 5);
 
-    // arr[0] = -1;
-    // arr[1] = 0;
-    // arr[2] = 1;
-    // arr[3] = 2;
-    // arr[4] = 3;
-    // arr[5] = 4;
-    // arr[6] = 5;
+    arr[0] = -1;
+    arr[1] = 0;
+    arr[2] = 1;
+    arr[3] = 2;
+    arr[4] = 3;
 
-    // assert(arr.size() == 7);
-    // assert(arr.front() == -1);
-    // assert(arr.back() == 5);
+    assert(arr.front() == -1);
+    assert(arr.back() == 3);
 
-    // vec.pop_back();
+    assert(arr.at(0) == -1);
+    assert(arr.at(2) == 1);
+    assert(arr.at(4) == 3);
 
-    // assert(vec.empty() == false);
+    assert(arr[0] == -1);
+    assert(arr[2] == 1);
+    assert(arr[4] == 3);
 
-    // assert(vec.size() == 6);
-    // assert(vec.front() == -1);
-    // assert(vec.back() == 4);
-    // assert(vec.at(0) == -1);
-    // assert(vec.at(2) == 1);
-    // assert(vec.at(4) == 3);
-
-    // assert(vec[0] == -1);
-    // assert(vec[2] == 1);
-    // assert(vec[4] == 3);
-    // assert(vec[6] == 5);
-
-    // int *data = vec.data();
-    // assert(data[0] == -1);
-    // assert(data[2] == 1);
-    // assert(data[4] == 3);
-    // assert(data[6] == 5);
+    int *data = arr.data();
+    assert(data[0] == -1);
+    assert(data[2] == 1);
+    assert(data[4] == 3);
 
     // stlite::Vector<int> vec2;
 

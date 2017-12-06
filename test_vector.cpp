@@ -177,5 +177,13 @@ int main()
     assert(vec10.back() == 88);
     assert(vec10[2] == 66);
 
+    vec10[0] = 101;
+    vec10[1] = 102;
+    vec10[2] = 103;
+
+    assert(vec10[0] == 101);
+    assert(vec10[1] == 102);
+    assert(vec10[2] == 103);
+
     return 0;
 }
