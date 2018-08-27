@@ -1,7 +1,8 @@
 CXX = g++
 CXXFLAGS = -g -std=c++11
 
-all:  test1 test2 test_list test_vector test_array test_set test_stack test_queue
+all:  test1 test2 test_list test_forward_list test_vector test_array test_set \
+	  test_stack test_queue
 
 test1: list.h
 	$(CXX) $(CXXFLAGS) test1.cpp -o test1
@@ -11,6 +12,9 @@ test2: list.h
 
 test_list: list.h
 	$(CXX) $(CXXFLAGS) test_list.cpp -o test_list
+
+test_forward_list: forward_list.h
+	$(CXX) $(CXXFLAGS) test_forward_list.cpp -o test_forward_list
 
 test_vector: vector.h
 	$(CXX) $(CXXFLAGS) test_vector.cpp -o test_vector
@@ -28,4 +32,5 @@ test_queue: queue.h
 	$(CXX) $(CXXFLAGS) test_queue.cpp -o test_queue
 
 clean:
-	-rm test1 test2 test_list test_vector test_array test_set test_stack test_queue
+	-rm test1 test2 test_list test_vector test_array test_set test_stack \
+	test_queue test_forward_list
