@@ -16,6 +16,68 @@
     std::cout << std::endl;
 }*/
 
+#include <string.h>
+
+class MyStr
+{
+    char* _data = nullptr;
+    unsigned _size = 0;
+public:
+    MyStr() = default;
+
+    MyStr(const char* data)
+    {
+        _size = strlen(data) + 1;
+        _data = (char *) malloc(_size);
+        strcpy(_data, data);
+    }
+
+    MyStr(char ch, unsigned size)
+    {
+        _size = size;
+        _data = (char *) malloc(_size);
+        for (unsigned i = 0; i < _size - 1; ++i)
+            _data[i] = ch;
+        _data[size - 1] = '\0';
+    }
+
+    MyStr(const MyStr& other)
+    {
+        _size = other._size;
+        _data = (char *) malloc(_size);
+        strcpy(_data, other._data);
+    }
+
+    MyStr(MyStr&& other)
+    {
+        _data = other._data;
+        _size = other._size;
+        other._data = nullptr;
+        other._size = 0;
+    }
+
+    void operator=(const MyStr& other)
+    {
+        _data = other._data;
+        _size = other._size;
+    }
+
+    void operator=(MyStr&& other)
+    {
+        _data = other._data;
+        _size = other._size;
+        other._data = nullptr;
+        other._size = 0;
+    }
+
+    bool operator==(const MyStr& other)
+    {
+        if (_size != other._size)
+            return false;
+        return strcmp(_data, other._data) == 0;
+    }
+};
+
 void test_push_front()
 {
     stlite::ForwardList<int> ls;
@@ -36,6 +98,13 @@ void test_push_front()
     assert(ls.empty() == false);
 }
 
+void test_push_front_str()
+{
+    stlite::ForwardList<MyStr> strLs;
+    strLs.push_front("abc");
+    assert(strLs.front() == "abc");
+}
+
 void test_remove()
 {
     stlite::ForwardList<int> ls1;
@@ -53,10 +122,37 @@ void test_remove()
     // TODO: Iterate and check the elements
 }
 
+void test_emplace_front()
+{
+    stlite::ForwardList<std::tuple<char, int>> ls;
+    ls.emplace_front('a', 5);
+    ls.emplace_front('b', 6);
+    ls.emplace_front('c', 7);
+}
+
+void test_iterator()
+{
+    stlite::ForwardList<int> ls;
+    for (int i = 9; i >= 0; --i)
+        ls.push_front(i);
+
+    int i = 0;
+    stlite::ForwardList<int>::Iterator iter = ls.begin();
+    while (iter != ls.end())
+    {
+        assert(*iter == i);
+        ++iter;
+        ++i;
+    }
+}
+
 int main()
 {
     test_push_front();
+    test_push_front_str();
     test_remove();
+    test_emplace_front();
+    test_iterator();
 
     // assert(ls.size() == 5);
     // assert(ls.front() == 0);

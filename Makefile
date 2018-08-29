@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -std=c++11
+CXXFLAGS = -g -std=c++17
 
 all:  test1 test2 test_list test_forward_list test_vector test_array test_set \
 	  test_stack test_queue

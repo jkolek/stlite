@@ -24,12 +24,18 @@
 #ifndef FORWARD_LIST_H
 #define FORWARD_LIST_H
 
+#include "allocator.h"
+
 #include <memory>
 
 namespace stlite
 {
 
-template <class T>
+// TODO: Support custom allocators:
+//   http://www.cplusplus.com/reference/memory/allocator/
+//   http://www.cplusplus.com/reference/memory/allocator_traits/
+
+template <class T, class Alloc = Allocator<T>>
 class ForwardList
 {
     struct Element
@@ -37,102 +43,84 @@ class ForwardList
         T value;
         struct Element* next = nullptr;
         Element() = default;
-        Element(T v) : value(v) {}
+        Element(const T& v) : value(v) {}
+        Element(T&& v) : value(std::move(v)) {}
     };
 
     Element* _lst = nullptr; // First element of the list
     unsigned _max_size = 0;
 
+    Allocator<T> allocator;
+
 public:
     ForwardList() {}
 
     // This constructor creates list from the given array
-    ForwardList(T* arr, unsigned len);
+    // ForwardList(T* arr, unsigned len);
 
-    ForwardList(const ForwardList<T>& other);               // Copy constructor
-    ForwardList(ForwardList<T>&& other);                    // Move constructor
+    // Copy constructor
+    // ForwardList(const ForwardList<T>& other);
 
-    ~ForwardList() { clear(); }                      // Destructor
+    // Move constructor
+    ForwardList(ForwardList<T, Alloc>&& other);
 
-    ForwardList<T>& operator=(const ForwardList<T>& other); // Copy assignment operator
+    ~ForwardList() { clear(); }
 
-    ForwardList<T>& operator=(ForwardList<T>&& other);      // Move assignment operator
+    // Copy assignment operator
+    ForwardList<T, Alloc>& operator=(const ForwardList<T, Alloc>& other);
 
-    // // Iterators
-    // class Iterator
-    // {
-    //     // This pointer points to previous Element of the current Element.
-    //     // This way is more practical when inserting and erasing Elements.
-    //     Element *_prev;
-    //     bool _is_end = false;
-    //     bool _next_is_end = false;
-    //     friend class List;
+    // Move assignment operator
+    ForwardList<T, Alloc>& operator=(ForwardList<T, Alloc>&& other);
 
-    //     bool test_end(const Iterator &other)
-    //     {
-    //         if (_next_is_end)
-    //             return true;
+    // Iterators
+    class Iterator
+    {
+        Element* _p = nullptr;
+        friend class List;
 
-    //         if (_prev->next == other._prev)
-    //             _next_is_end = true;
+    public:
+        Iterator() = default;
 
-    //         return false;
-    //     }
+        Iterator(Element* e) : _p(e) {}
 
-    // public:
-    //     Iterator() {}
+        // Only forward iteration is supported
 
-    //     Iterator(Element *e) : _prev(e) {}
-    //     Iterator(Element *e, bool is_end) : _prev(e), _is_end(is_end) {}
+        // Prefix increment operator
+        Iterator & operator++()
+        {
+            if (_p)
+                _p = _p->next;
+            return *this;
+        }
 
-    //     // Prefix increment operator
-    //     Iterator & operator++()
-    //     {
-    //         if (_prev)
-    //             _prev = _prev->next;
-    //         return *this;
-    //     }
+        // Postfix increment operator
+        Iterator operator++(int)
+        {
+            Iterator tmp = *this;
+            if (_p)
+                _p = _p->next;
+            return tmp;
+        }
 
-    //     // Postfix increment operator
-    //     Iterator operator++(int)
-    //     {
-    //         Iterator tmp = *this;
-    //         if (_prev)
-    //             _prev = _prev->next;
-    //         return tmp;
-    //     }
+        T& operator*()
+        {
+            if (_p)
+                return _p->value;
+        }
 
-    //     T & operator*()
-    //     {
-    //         if (_prev)
-    //             return _prev->next->value;
-    //     }
+        bool operator==(const Iterator& other)
+        {
+            return other._p == _p;
+        }
 
-    //     bool operator==(Iterator other)
-    //     {
-    //         if (!_prev || !other._prev)
-    //             return false;
+        bool operator!=(const Iterator& other)
+        {
+            return other._p != _p;
+        }
+    };
 
-    //         if (other._is_end)
-    //             return test_end(other);
-
-    //         return other._prev->next == _prev->next;
-    //     }
-
-    //     bool operator!=(Iterator other)
-    //     {
-    //         if (!_prev || !other._prev)
-    //             return false;
-
-    //         if (other._is_end)
-    //             return !test_end(other);
-
-    //         return other._prev->next != _prev->next;
-    //     }
-    // };
-
-    // Iterator begin() { return Iterator(_lst); }
-    // Iterator end() { return Iterator(_lst, true); }
+    Iterator begin() { return Iterator(_lst); }
+    Iterator end() { return Iterator(); }
 
     // Capacity
     bool empty() { return _lst == nullptr; }
@@ -147,7 +135,7 @@ public:
     // http://www.cplusplus.com/reference/forward_list/forward_list/assign/
     // void assign();
     // http://www.cplusplus.com/reference/forward_list/forward_list/emplace_front/
-    // void emplace_front();
+    template <class... Args> void emplace_front(Args&&... args);
     void push_front(const T& value);
     void push_front(T&& value);
     void pop_front();
@@ -167,34 +155,34 @@ public:
 // Implementations of methods
 //====----------------------------------------------------------------------====
 
-template <class T>
-ForwardList<T>::ForwardList(T* arr, unsigned len)
-{
-    for (unsigned i = 0; i < len; i++)
-        push_back(arr[i]);
-}
+// template <class T>
+// ForwardList<T>::ForwardList(T* arr, unsigned len)
+// {
+//     for (unsigned i = 0; i < len; i++)
+//         push_back(arr[i]);
+// }
 
-// Copy constructor
-template <class T>
-ForwardList<T>::ForwardList(const ForwardList<T>& other)
-{
-    if (&other != this && other._lst)
-    {
-        // Pointer to the first element
-        Element* p = other._lst->next;
-        while (p != other._lst)
-        {
-            push_back(p->value);
-            p = p->next;
-        }
+// // Copy constructor
+// template <class T>
+// ForwardList<T>::ForwardList(const ForwardList<T>& other)
+// {
+//     if (&other != this && other._lst)
+//     {
+//         // Pointer to the first element
+//         Element* p = other._lst->next;
+//         while (p != other._lst)
+//         {
+//             push_back(p->value);
+//             p = p->next;
+//         }
 
-        push_back(p->value);
-    }
-}
+//         push_back(p->value);
+//     }
+// }
 
 // Move constructor
-template <class T>
-ForwardList<T>::ForwardList(ForwardList<T>&& other)
+template <class T, class Alloc>
+ForwardList<T, Alloc>::ForwardList(ForwardList<T, Alloc>&& other)
 {
     if (&other != this)
     {
@@ -207,8 +195,9 @@ ForwardList<T>::ForwardList(ForwardList<T>&& other)
 }
 
 // Copy assignment operator
-template <class T>
-ForwardList<T>& ForwardList<T>::operator=(const ForwardList<T>& other)
+template <class T, class Alloc>
+ForwardList<T, Alloc>& ForwardList<T, Alloc>::operator=(const ForwardList<T,
+                                                        Alloc>& other)
 {
     if (&other != this && other._lst)
     {
@@ -228,8 +217,9 @@ ForwardList<T>& ForwardList<T>::operator=(const ForwardList<T>& other)
 }
 
 // Move assignment operator
-template <class T>
-ForwardList<T>& ForwardList<T>::operator=(ForwardList&& other)
+template <class T, class Alloc>
+ForwardList<T, Alloc>&ForwardList<T, Alloc>::operator=(ForwardList<T,
+                                                       Alloc>&& other)
 {
     if (&other != this)
     {
@@ -244,49 +234,53 @@ ForwardList<T>& ForwardList<T>::operator=(ForwardList&& other)
 }
 
 // TODO: Check if _lst is nullptr?
-template <class T>
-T ForwardList<T>::front()
+template <class T, class Alloc>
+T ForwardList<T, Alloc>::front()
 {
     return _lst->value;
 }
 
-// Insert element at beginning of the list
-template <class T>
-void ForwardList<T>::push_front(const T& value)
+template <class T, class Alloc>
+template <class... Args>
+void ForwardList<T, Alloc>::emplace_front(Args&&... args)
 {
-    Element* e = new Element(value);
+    Element* e = new Element();
+    // TODO: This is WRONG. How to make it generic?
+    e->value = std::make_tuple(std::forward<Args>(args)...);
 
-    if (!_lst)
-    {
-        _lst = e;
-    }
-    else
-    {
+    if (_lst)
         e->next = _lst;
-        _lst = e;
-    }
+
+    _lst = e;
 }
 
 // Insert element at beginning of the list
-template <class T>
-void ForwardList<T>::push_front(T&& value)
+template <class T, class Alloc>
+void ForwardList<T, Alloc>::push_front(const T& value)
+{
+    Element* e = new Element(value);
+
+    if (_lst)
+        e->next = _lst;
+
+    _lst = e;
+}
+
+// Insert element at beginning of the list
+template <class T, class Alloc>
+void ForwardList<T, Alloc>::push_front(T&& value)
 {
     Element* e = new Element();
     e->value = std::move(value);
 
-    if (!_lst)
-    {
-        _lst = e;
-    }
-    else
-    {
+    if (_lst)
         e->next = _lst;
-        _lst = e;
-    }
+
+    _lst = e;
 }
 
-template <class T>
-void ForwardList<T>::pop_front()
+template <class T, class Alloc>
+void ForwardList<T, Alloc>::pop_front()
 {
     if (!_lst)
         return;
@@ -351,8 +345,8 @@ void ForwardList<T>::pop_front()
 //     }
 // }
 
-template <class T>
-void ForwardList<T>::clear()
+template <class T, class Alloc>
+void ForwardList<T, Alloc>::clear()
 {
     if (!_lst)
         return;
@@ -370,8 +364,8 @@ void ForwardList<T>::clear()
 }
 
 // Remove element with the value from the list.
-template <class T>
-void ForwardList<T>::remove(const T& value)
+template <class T, class Alloc>
+void ForwardList<T, Alloc>::remove(const T& value)
 {
     if (!_lst)
         return;
@@ -397,8 +391,8 @@ void ForwardList<T>::remove(const T& value)
     delete p;
 }
 
-template <class T>
-void ForwardList<T>::reverse()
+template <class T, class Alloc>
+void ForwardList<T, Alloc>::reverse()
 {
     // TODO: Implement
 }
