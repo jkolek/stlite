@@ -263,7 +263,7 @@ void Vector<T>::push_back(T value)
             return;
 
         T *tmp = new T[new_capacity];
-        std::copy(_data, _data + _size, tmp);
+        copy<T>(_data, _data + _size, tmp);
         delete [] _data;
         _data = tmp;
         _capacity = new_capacity;

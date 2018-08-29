@@ -44,7 +44,7 @@ class ForwardList
         struct Element* next = nullptr;
         Element() = default;
         Element(const T& v) : value(v) {}
-        Element(T&& v) : value(std::move(v)) {}
+        Element(T&& v) : value(static_cast<T &&>(v)) {}
     };
 
     Element* _lst = nullptr; // First element of the list
@@ -271,7 +271,7 @@ template <class T, class Alloc>
 void ForwardList<T, Alloc>::push_front(T&& value)
 {
     Element* e = new Element();
-    e->value = std::move(value);
+    e->value = static_cast<T &&>(value);
 
     if (_lst)
         e->next = _lst;

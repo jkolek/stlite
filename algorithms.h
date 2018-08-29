@@ -31,13 +31,16 @@ template <class T>
 void max(T a, T b);
 
 template <class T>
-void swap(T &a, T &b);
+void swap(T& a, T& b);
 
 template <class T>
-void quick_sort(T *arr, unsigned len);
+void copy(T* start, T* end, T* dst);
 
 template <class T>
-int binary_search(T x, T *arr, unsigned len);
+void quick_sort(T* arr, unsigned len);
+
+template <class T>
+int binary_search(T x, T* arr, unsigned len);
 
 //====----------------------------------------------------------------------====
 // Implementations of methods
@@ -56,7 +59,7 @@ void max(T a, T b)
 }
 
 template <class T>
-void swap(T &a, T &b)
+void swap(T& a, T& b)
 {
     T tmp = a;
     a = b;
@@ -64,7 +67,18 @@ void swap(T &a, T &b)
 }
 
 template <class T>
-static int pivot(T *arr, int lo, int hi)
+void copy(T* start, T* end, T* dst)
+{
+    unsigned char* p = (unsigned char *) start;
+    unsigned char* e = (unsigned char *) end;
+    unsigned char* d = (unsigned char *) dst;
+
+    while (p != e)
+        *d++ = *p++;
+}
+
+template <class T>
+static int pivot(T* arr, int lo, int hi)
 {
     T pval = arr[hi];
     int i = lo-1;
@@ -82,7 +96,7 @@ static int pivot(T *arr, int lo, int hi)
 }
 
 template <class T>
-static void quick_sort_helper(T *arr, int lo, int hi)
+static void quick_sort_helper(T* arr, int lo, int hi)
 {
     if (lo < hi)
     {
@@ -99,7 +113,7 @@ void quick_sort(T *arr, unsigned len)
 }
 
 template <class T>
-static int binary_search_helper(T x, T *arr, int lo, int hi)
+static int binary_search_helper(T x, T* arr, int lo, int hi)
 {
     if (lo < hi)
     {
@@ -115,7 +129,7 @@ static int binary_search_helper(T x, T *arr, int lo, int hi)
 }
 
 template <class T>
-int binary_search(T x, T *arr, unsigned len)
+int binary_search(T x, T* arr, unsigned len)
 {
     return binary_search_helper(x, arr, 0, len-1);
 }
