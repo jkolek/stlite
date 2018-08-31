@@ -68,13 +68,14 @@ Allocator<T>::~Allocator()
 template <class T>
 T* Allocator<T>::allocate(size_t n)
 {
-    return new T();
+    return new T[n];
 }
 
 template <class T>
 void Allocator<T>::deallocate(T* p, size_t n)
 {
-    delete p;
+    if (p)
+        delete [] p;
 }
 
 } // namespace stlite

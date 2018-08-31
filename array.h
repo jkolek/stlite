@@ -25,57 +25,60 @@
 #define ARRAY_H
 
 #include "algorithms.h"
+#include "allocator.h"
 
+#ifdef USE_STL
 #include <algorithm>
+#endif
 
 namespace stlite
 {
 
-// constexpr unsigned vector_block_size = 100;
-
-template <class T>
+template <class T, class Alloc = Allocator<T>>
 class Array
 {
-    T *_data = nullptr;
-    unsigned _max_size = -1;
-    unsigned _size = 0;
+    T* _data = nullptr;
+    size_t _max_size = -1;
+    size_t _size = 0;
 
-    // TODO: Implement external allocator
-    void allocate_data(unsigned capacity)
+    Alloc allocator;
+
+    void allocate_data(size_t n)
     {
-        _data = new T[capacity];
+        _size = n;
+        _data = allocator.allocate(n);
     }
 
 public:
     Array() {}
 
     // Fill constructors
-    explicit Array(unsigned n)
+    explicit Array(size_t n)
     {
-        _size = n;
         allocate_data(n);
     }
 
-    explicit Array(unsigned n, const T &val)
+    explicit Array(size_t n, const T& val)
     {
-        _size = n;
         allocate_data(n);
         for (unsigned i = 0; i < n; i++)
             _data[i] = val;
     }
 
     // This constructor creates array from the given array
-    Array(T *arr, unsigned len);
+    Array(T* arr, size_t len);
 
+#ifdef USE_STL
     Array(std::initializer_list<T> initlst);
+#endif
 
-    Array(const Array &other);              // Copy constructor
-    Array(Array &&other);                   // Move constructor
+    Array(const Array& other);              // Copy constructor
+    Array(Array&& other);                   // Move constructor
 
-    ~Array() { if (_data) delete [] _data; } // Destructor
+    ~Array() { allocator.deallocate(_data, _size); } // Destructor
 
-    Array<T>& operator=(const Array &other); // Copy assignment operator
-    Array<T>& operator=(Array &&other);     // Move assignment operator
+    Array<T>& operator=(const Array& other); // Copy assignment operator
+    Array<T>& operator=(Array&& other);     // Move assignment operator
 
     // // Iterators
     // class Iterator
@@ -129,7 +132,7 @@ public:
     // http://www.cplusplus.com/reference/array/array/operator[]/
     // We must be able to assign values via []:
     //   arr[2] = 33;
-    T & operator[](int n) { return _data[n]; }
+    T& operator[](int n) { return _data[n]; }
     T operator[](int n) const { return _data[n]; }
 
     // http://www.cplusplus.com/reference/array/array/at/
@@ -143,11 +146,11 @@ public:
     }
 
     T front() { return _data[0]; }
-    T back() { return _data[_size-1]; }
-    T *data() { return _data; }
+    T back() { return _data[_size - 1]; }
+    T* data() { return _data; }
 
     // Modifiers
-    void fill(const T &value);
+    void fill(const T& value);
     // swap()
 };
 
@@ -155,16 +158,17 @@ public:
 // Implementations of methods
 //====----------------------------------------------------------------------====
 
-template <class T>
-Array<T>::Array(T *arr, unsigned len)
+template <class T, class Alloc>
+Array<T, Alloc>::Array(T* arr, size_t len)
 {
     _size = len;
     allocate_data(len);
-    std::copy(arr, arr + _size, _data);
+    copy<T>(arr, arr + _size, _data);
 }
 
-template <class T>
-Array<T>::Array(std::initializer_list<T> initlst)
+#ifdef USE_STL
+template <class T, class Alloc>
+Array<T, Alloc>::Array(std::initializer_list<T> initlst)
 {
     _size = initlst.size();
     allocate_data(_size);
@@ -174,19 +178,20 @@ Array<T>::Array(std::initializer_list<T> initlst)
     for (auto x : initlst)
         _data[idx++] = x;
 }
+#endif
 
 // Copy constructor
-template <class T>
-Array<T>::Array(const Array &other)
+template <class T, class Alloc>
+Array<T, Alloc>::Array(const Array& other)
 {
     _size = other._size;
     allocate_data(other._size);
-    std::copy(other._data, other._data + _size, _data);
+    copy<T>(other._data, other._data + _size, _data);
 }
 
 // Move constructor
-template <class T>
-Array<T>::Array(Array &&other)
+template <class T, class Alloc>
+Array<T, Alloc>::Array(Array&& other)
 {
     if (&other != this)
     {
@@ -199,29 +204,31 @@ Array<T>::Array(Array &&other)
 }
 
 // Copy assignment operator
-template <class T>
-Array<T>& Array<T>::operator=(const Array &other)
+template <class T, class Alloc>
+Array<T>& Array<T, Alloc>::operator=(const Array& other)
 {
     if (&other != this)
     {
-        if (_data)
-            delete [] _data;
+        // if (_data)
+        //     delete [] _data;
+        allocator.deallocate(_data, _size);
 
         _size = other._size;
         allocate_data(other._size);
-        std::copy(other._data, other._data + _size, _data);
+        copy<T>(other._data, other._data + _size, _data);
     }
     return *this;
 }
 
 // Move assignment operator
-template <class T>
-Array<T>& Array<T>::operator=(Array &&other)
+template <class T, class Alloc>
+Array<T>& Array<T, Alloc>::operator=(Array&& other)
 {
     if (&other != this)
     {
-        if (_data)
-            delete [] _data;
+        // if (_data)
+        //     delete [] _data;
+        allocator.deallocate(_data, _size);
 
         _data = other._data;
         _size = other._size;
@@ -232,8 +239,8 @@ Array<T>& Array<T>::operator=(Array &&other)
     return *this;
 }
 
-template <class T>
-void Array<T>::fill(const T &value)
+template <class T, class Alloc>
+void Array<T, Alloc>::fill(const T& value)
 {
     for (unsigned i = 0; i < _size; ++i)
         _data[i] = value;
