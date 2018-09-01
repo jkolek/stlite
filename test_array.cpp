@@ -4,6 +4,36 @@
 #include <iostream>
 #include <assert.h>
 
+void test_iterator()
+{
+    stlite::Array<int> arr(5);
+
+    assert(arr.size() == 5);
+
+    arr[0] = -1;
+    arr[1] = 0;
+    arr[2] = 1;
+    arr[3] = 2;
+    arr[4] = 3;
+
+    int i = -1;
+    stlite::Array<int>::Iterator iter = arr.begin();
+    while (iter != arr.end())
+    {
+        assert(*iter == i);
+        ++iter;
+        ++i;
+    }
+
+    iter = arr.end();
+    do
+    {
+        --i;
+        --iter;
+        assert(*iter == i);
+    } while (iter != arr.begin());
+}
+
 int main()
 {
     stlite::Array<int> arr(5);

@@ -109,6 +109,21 @@ public:
             _current++;
             return tmp;
         }
+    
+        // Prefix decrement operator
+        Iterator& operator--()
+        {
+            --_current;
+            return *this;
+        }
+
+        // Postfix decrement operator
+        Iterator operator--(int)
+        {
+            Iterator tmp = *this;
+            --_current;
+            return tmp;
+        }
 
         T& operator*()
         {
@@ -151,14 +166,14 @@ public:
         // TODO: Throw out_of_range exception
     }
 
-    T front() { return _data[0]; }
-    T back() { return _data[_size-1]; }
+    T& front() { return _data[0]; }
+    T& back() { return _data[_size-1]; }
     T* data() { return _data; }
 
     // Modifiers
     void push_back(const T& value);
     void push_back(T&& value);
-    bool pop_back();
+    void pop_back();
     void append(const Vector& other);
     void clear();
 
@@ -298,7 +313,7 @@ void Vector<T, Alloc>::push_back(T&& value)
 }
 
 template <class T, class Alloc>
-bool Vector<T, Alloc>::pop_back()
+void Vector<T, Alloc>::pop_back()
 {
     if (_size > 0)
         _size--;

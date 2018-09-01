@@ -149,8 +149,8 @@ public:
 
     // Element access
     // If the list is empty, the return value of these functions is undefined
-    T front() { if (_lst) return _lst->next->value; }
-    T back() { if (_lst) return _lst->value; }
+    T& front() { return _lst->next->value; }
+    T& back() { return _lst->value; }
     T at(unsigned pos);
 
     // Modifiers

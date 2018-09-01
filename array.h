@@ -80,48 +80,64 @@ public:
     Array<T>& operator=(const Array& other); // Copy assignment operator
     Array<T>& operator=(Array&& other);     // Move assignment operator
 
-    // // Iterators
-    // class Iterator
-    // {
-    //     T *_data = nullptr;
-    //     unsigned _current = -1;
-    // public:
-    //     Iterator() {}
-    //     Iterator(T *data, unsigned n) : _data(data), _current(n) {}
+    // Iterators
+    class Iterator
+    {
+        T* _data = nullptr;
+        unsigned _current = -1;
+    public:
+        Iterator() {}
+        Iterator(T* data, unsigned n) : _data(data), _current(n) {}
 
-    //     // Prefix increment operator
-    //     Iterator & operator++()
-    //     {
-    //         _current++;
-    //         return *this;
-    //     }
+        // Prefix increment operator
+        Iterator& operator++()
+        {
+            ++_current;
+            return *this;
+        }
 
-    //     // Postfix increment operator
-    //     Iterator operator++(int)
-    //     {
-    //         Iterator tmp = *this;
-    //         _current++;
-    //         return tmp;
-    //     }
+        // Postfix increment operator
+        Iterator operator++(int)
+        {
+            Iterator tmp = *this;
+            ++_current;
+            return tmp;
+        }
 
-    //     T & operator*()
-    //     {
-    //         return _data[_current];
-    //     }
+        // Prefix decrement operator
+        Iterator& operator--()
+        {
+            --_current;
+            return *this;
+        }
 
-    //     bool operator==(Iterator other)
-    //     {
-    //         return other._current == _current;
-    //     }
+        // Postfix decrement operator
+        Iterator operator--(int)
+        {
+            Iterator tmp = *this;
+            --_current;
+            return tmp;
+        }
 
-    //     bool operator!=(Iterator other)
-    //     {
-    //         return other._current != _current;
-    //     }
-    // };
-    // Iterator begin() { return Iterator(_data, 0); }
-    // // TODO: This is invalid end
-    // Iterator end() { return Iterator(nullptr, _size); }
+        T& operator*()
+        {
+            return _data[_current];
+        }
+
+        bool operator==(Iterator other)
+        {
+            return other._current == _current;
+        }
+
+        bool operator!=(Iterator other)
+        {
+            return other._current != _current;
+        }
+    };
+
+    Iterator begin() { return Iterator(_data, 0); }
+    // TODO: This is invalid end
+    Iterator end() { return Iterator(nullptr, _size); }
 
     // Capacity
     size_t size() const { return _size; }
@@ -145,8 +161,8 @@ public:
         // TODO: Throw out_of_range exception
     }
 
-    T front() { return _data[0]; }
-    T back() { return _data[_size - 1]; }
+    T& front() { return _data[0]; }
+    T& back() { return _data[_size - 1]; }
     T* data() { return _data; }
 
     // Modifiers
