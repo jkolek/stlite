@@ -37,8 +37,8 @@ class Stack
 public:
     Stack() {}
 
-    Stack(const Stack &other) {}                 // Copy constructor
-    Stack(Stack &&other) {}                      // Move constructor
+    Stack(const Stack& other) {}                 // Copy constructor
+    Stack(Stack&& other) {}                      // Move constructor
 
     ~Stack() {}                                // Destructor
 
@@ -46,15 +46,15 @@ public:
     //Stack<T>& operator=(Stack &&other);      // Move assignment operator
 
     // Capacity
-    bool empty() { return _data.empty(); }
-    unsigned size() { return _data.size(); }
+    bool empty() const { return _data.empty(); }
+    size_t size() const { return _data.size(); }
 
     // Element access
     T top() { return _data.back(); }
 
     // Modifiers
     void push(T value) { _data.push_back(value); }
-    bool pop() { _data.pop_back(); };
+    void pop() { _data.pop_back(); };
 };
 
 } // namespace stlite

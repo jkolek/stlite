@@ -115,12 +115,12 @@ public:
             return _data[_current];
         }
 
-        bool operator==(Iterator other)
+        bool operator==(const Iterator& other)
         {
             return other._current == _current;
         }
 
-        bool operator!=(Iterator other)
+        bool operator!=(const Iterator& other)
         {
             return other._current != _current;
         }
@@ -131,10 +131,10 @@ public:
     Iterator end() { return Iterator(nullptr, _size); }
 
     // Capacity
-    unsigned size() { return _size; }
-    unsigned max_size() { return _max_size; }
-    unsigned capacity() { return _capacity; }
-    bool empty() { return _size == 0; }
+    size_t size() const { return _size; }
+    size_t max_size() const { return _max_size; }
+    size_t capacity() const { return _capacity; }
+    bool empty() const { return _size == 0; }
 
     // Element access
     // http://www.cplusplus.com/reference/vector/vector/operator[]/

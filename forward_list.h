@@ -26,7 +26,9 @@
 
 #include "allocator.h"
 
+#ifdef USE_STL
 #include <memory>
+#endif
 
 namespace stlite
 {
@@ -48,7 +50,7 @@ class ForwardList
     };
 
     Element* _lst = nullptr; // First element of the list
-    unsigned _max_size = 0;
+    size_t _max_size = 0;
 
     Allocator<T> allocator;
 
@@ -86,7 +88,7 @@ public:
         // Only forward iteration is supported
 
         // Prefix increment operator
-        Iterator & operator++()
+        Iterator& operator++()
         {
             if (_p)
                 _p = _p->next;
@@ -123,8 +125,8 @@ public:
     Iterator end() { return Iterator(); }
 
     // Capacity
-    bool empty() { return _lst == nullptr; }
-    unsigned max_size() { return _max_size; }
+    bool empty() const { return _lst == nullptr; }
+    size_t max_size() const { return _max_size; }
 
     // Element access
     // If the list is empty, the return value of these functions is undefined
@@ -134,8 +136,10 @@ public:
 
     // http://www.cplusplus.com/reference/forward_list/forward_list/assign/
     // void assign();
+#ifdef USE_STL
     // http://www.cplusplus.com/reference/forward_list/forward_list/emplace_front/
     template <class... Args> void emplace_front(Args&&... args);
+#endif
     void push_front(const T& value);
     void push_front(T&& value);
     void pop_front();
@@ -240,6 +244,7 @@ T ForwardList<T, Alloc>::front()
     return _lst->value;
 }
 
+#ifdef USE_STL
 template <class T, class Alloc>
 template <class... Args>
 void ForwardList<T, Alloc>::emplace_front(Args&&... args)
@@ -253,6 +258,7 @@ void ForwardList<T, Alloc>::emplace_front(Args&&... args)
 
     _lst = e;
 }
+#endif
 
 // Insert element at beginning of the list
 template <class T, class Alloc>

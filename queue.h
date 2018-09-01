@@ -46,8 +46,8 @@ public:
     //Queue<T>& operator=(Queue<T> &&other);      // Move assignment operator
 
     // Capacity
-    bool empty() { return _data.empty(); }
-    unsigned size() { return _data.size(); }
+    bool empty() const { return _data.empty(); }
+    size_t size() const { return _data.size(); }
 
     // Element access
     T front() { return _data.front(); }
@@ -55,7 +55,7 @@ public:
 
     // Modifiers
     void push(T value) { _data.push_back(value); }
-    bool pop() { _data.pop_front(); }
+    void pop() { _data.pop_front(); }
 };
 
 } // namespace stlite

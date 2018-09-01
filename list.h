@@ -24,6 +24,8 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include "allocator.h"
+
 namespace stlite
 {
 
@@ -33,7 +35,7 @@ class List
     struct Element
     {
         T value;
-        struct Element *next = nullptr;
+        struct Element* next = nullptr;
         Element(T v) : value(v) {}
     };
 
@@ -47,35 +49,35 @@ class List
     //    +-----------------------+
     //
 
-    Element *_lst = nullptr;
-    unsigned _size = 0;
+    Element* _lst = nullptr;
+    size_t _size = 0;
 
 public:
     List() {}
 
     // This constructor creates list from the given array
-    List(T *arr, unsigned len);
+    List(T* arr, size_t len);
 
-    List(const List<T> &other);               // Copy constructor
-    List(List<T> &&other);                    // Move constructor
+    List(const List<T>& other);               // Copy constructor
+    List(List<T>&& other);                    // Move constructor
 
     ~List() { clear(); }                      // Destructor
 
-    List<T>& operator=(const List<T> &other); // Copy assignment operator
+    List<T>& operator=(const List<T>& other); // Copy assignment operator
 
-    List<T>& operator=(List<T> &&other);      // Move assignment operator
+    List<T>& operator=(List<T>&& other);      // Move assignment operator
 
     // Iterators
     class Iterator
     {
         // This pointer points to previous Element of the current Element.
         // This way is more practical when inserting and erasing Elements.
-        Element *_prev;
+        Element* _prev;
         bool _is_end = false;
         bool _next_is_end = false;
         friend class List;
 
-        bool test_end(const Iterator &other)
+        bool test_end(const Iterator& other)
         {
             if (_next_is_end)
                 return true;
@@ -89,11 +91,11 @@ public:
     public:
         Iterator() {}
 
-        Iterator(Element *e) : _prev(e) {}
-        Iterator(Element *e, bool is_end) : _prev(e), _is_end(is_end) {}
+        Iterator(Element* e) : _prev(e) {}
+        Iterator(Element* e, bool is_end) : _prev(e), _is_end(is_end) {}
 
         // Prefix increment operator
-        Iterator & operator++()
+        Iterator& operator++()
         {
             if (_prev)
                 _prev = _prev->next;
@@ -109,7 +111,7 @@ public:
             return tmp;
         }
 
-        T & operator*()
+        T& operator*()
         {
             if (_prev)
                 return _prev->next->value;
@@ -142,8 +144,8 @@ public:
     Iterator end() { return Iterator(_lst, true); }
 
     // Capacity
-    bool empty() { return _lst == nullptr; }
-    unsigned size() { return _size; }
+    bool empty() const { return _lst == nullptr; }
+    size_t size() const { return _size; }
 
     // Element access
     // If the list is empty, the return value of these functions is undefined
@@ -152,17 +154,17 @@ public:
     T at(unsigned pos);
 
     // Modifiers
-    void push_back(T value);
-    void push_front(T value);
+    void push_back(const T& value);
+    void push_front(const T& value);
     bool pop_front();
     bool pop_back();
-    void insert(Iterator &pos, const T &value);
-    void erase(Iterator &pos);
-    void append(const List &other);
+    void insert(Iterator& pos, const T& value);
+    void erase(Iterator& pos);
+    void append(const List& other);
     void clear();
 
     // Operations
-    bool remove(T value);
+    bool remove(const T& value);
     bool remove_pos(unsigned pos);
     void reverse();
 };
@@ -172,20 +174,20 @@ public:
 //====----------------------------------------------------------------------====
 
 template <class T>
-List<T>::List(T *arr, unsigned len)
+List<T>::List(T* arr, size_t len)
 {
-    for (unsigned i = 0; i < len; i++)
+    for (size_t i = 0; i < len; i++)
         push_back(arr[i]);
 }
 
 // Copy constructor
 template <class T>
-List<T>::List(const List<T> &other)
+List<T>::List(const List<T>& other)
 {
     if (&other != this && other._lst)
     {
         // Pointer to the first element
-        Element *p = other._lst->next;
+        Element* p = other._lst->next;
         while (p != other._lst)
         {
             push_back(p->value);
@@ -198,7 +200,7 @@ List<T>::List(const List<T> &other)
 
 // Move constructor
 template <class T>
-List<T>::List(List<T> &&other)
+List<T>::List(List<T>&& other)
 {
     if (&other != this)
     {
@@ -212,14 +214,14 @@ List<T>::List(List<T> &&other)
 
 // Copy assignment operator
 template <class T>
-List<T>& List<T>::operator=(const List<T> &other)
+List<T>& List<T>::operator=(const List<T>& other)
 {
     if (&other != this && other._lst)
     {
         clear();
 
         // Pointer to the first element
-        Element *p = other._lst->next;
+        Element* p = other._lst->next;
         while (p != other._lst)
         {
             push_back(p->value);
@@ -233,7 +235,7 @@ List<T>& List<T>::operator=(const List<T> &other)
 
 // Move assignment operator
 template <class T>
-List<T>& List<T>::operator=(List &&other)
+List<T>& List<T>::operator=(List&& other)
 {
     if (&other != this)
     {
@@ -255,7 +257,7 @@ T List<T>::at(unsigned pos)
         unsigned n = 0;
 
         // Pointer to the first element
-        Element *p = _lst->next;
+        Element* p = _lst->next;
         while (n != pos && p != _lst)
         {
             p = p->next;
@@ -269,9 +271,9 @@ T List<T>::at(unsigned pos)
 
 // Append element to end of the list
 template <class T>
-void List<T>::push_back(T value)
+void List<T>::push_back(const T& value)
 {
-    Element *e = new Element(value);
+    Element* e = new Element(value);
 
     if (!_lst)
     {
@@ -289,9 +291,9 @@ void List<T>::push_back(T value)
 
 // Insert element at beginning of the list
 template <class T>
-void List<T>::push_front(T value)
+void List<T>::push_front(const T& value)
 {
-    Element *e = new Element(value);
+    Element* e = new Element(value);
 
     if (!_lst)
     {
@@ -326,7 +328,7 @@ bool List<T>::pop_front()
     }
     else
     {
-        Element *old = _lst->next;
+        Element* old = _lst->next;
         _lst->next = _lst->next->next;
         delete old;
         _size--;
@@ -367,11 +369,11 @@ bool List<T>::pop_back()
 }
 
 template <class T>
-void List<T>::insert(Iterator &pos, const T &value)
+void List<T>::insert(Iterator& pos, const T& value)
 {
     if (pos._prev)
     {
-        Element *e = new Element(value);
+        Element* e = new Element(value);
         e->next = pos._prev->next;
         pos._prev->next = e;
         pos._prev = pos._prev->next;
@@ -384,11 +386,11 @@ void List<T>::insert(Iterator &pos, const T &value)
 }
 
 template <class T>
-void List<T>::erase(Iterator &pos)
+void List<T>::erase(Iterator& pos)
 {
     if (pos._prev)
     {
-        Element *old = pos._prev->next;
+        Element* old = pos._prev->next;
         pos._prev = pos._prev->next;
         delete old;
     }
@@ -396,12 +398,12 @@ void List<T>::erase(Iterator &pos)
 
 // Append elements of other to end of the list
 template <class T>
-void List<T>::append(const List &other)
+void List<T>::append(const List& other)
 {
     if (other._lst)
     {
         // Pointer to the first element
-        Element *p = other._lst->next;
+        Element* p = other._lst->next;
         while (p != other._lst)
         {
             push_back(p->value);
@@ -418,11 +420,11 @@ void List<T>::clear()
     if (!_lst)
         return;
 
-    Element *p = _lst;
+    Element* p = _lst;
 
     while (p->next != _lst)
     {
-        Element *old = _lst->next;
+        Element* old = _lst->next;
         _lst->next = _lst->next->next;
         delete old;
     }
@@ -435,7 +437,7 @@ void List<T>::clear()
 // Remove element with the value from the list.
 // Return true if element has been removed, false otherwise.
 template <class T>
-bool List<T>::remove(T value)
+bool List<T>::remove(const T& value)
 {
     if (!_lst)
         return false;
@@ -463,7 +465,7 @@ bool List<T>::remove(T value)
         if (p->next == _lst)
             _lst = p;
 
-        Element *old = p->next;
+        Element* old = p->next;
         p->next = p->next->next;
         delete old;
         _size--;

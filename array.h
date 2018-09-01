@@ -124,9 +124,9 @@ public:
     // Iterator end() { return Iterator(nullptr, _size); }
 
     // Capacity
-    unsigned size() { return _size; }
-    unsigned max_size() { return _max_size; }
-    bool empty() { return _size == 0; }
+    size_t size() const { return _size; }
+    size_t max_size() const { return _max_size; }
+    bool empty() const { return _size == 0; }
 
     // Element access
     // http://www.cplusplus.com/reference/array/array/operator[]/

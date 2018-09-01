@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -std=c++17 -DUSE_STL
+CXXFLAGS = -g -std=c++14 -DUSE_STL
 
 all:  test1 test2 test_list test_forward_list test_vector test_array test_set \
 	  test_stack test_queue
