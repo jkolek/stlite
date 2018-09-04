@@ -66,19 +66,78 @@ public:
     }
 
     // This constructor creates array from the given array
-    Array(T* arr, size_t len);
+    Array(const T* arr, size_t len)
+    {
+        _size = len;
+        allocate_data(len);
+        copy<T>(arr, arr + _size, _data);
+    }
 
 #ifdef USE_STL
-    Array(std::initializer_list<T> initlst);
+    Array(std::initializer_list<T> initlst)
+    {
+        _size = initlst.size();
+        allocate_data(_size);
+
+        unsigned idx = 0;
+
+        for (auto x : initlst)
+            _data[idx++] = x;
+    }
 #endif
 
-    Array(const Array& other);              // Copy constructor
-    Array(Array&& other);                   // Move constructor
+    // Copy constructor
+    Array(const Array& other)
+    {
+        _size = other._size;
+        allocate_data(other._size);
+        copy<T>(other._data, other._data + _size, _data);
+    }
+
+    // Move constructor
+    Array(Array&& other)
+    {
+        if (&other != this)
+        {
+            _data = other._data;
+            _size = other._size;
+
+            other._data = nullptr;
+            other._size = 0;
+        }
+    }
 
     ~Array() { allocator.deallocate(_data, _size); } // Destructor
 
-    Array<T>& operator=(const Array& other); // Copy assignment operator
-    Array<T>& operator=(Array&& other);     // Move assignment operator
+    // Copy assignment operator
+    Array<T>& operator=(const Array& other)
+    {
+        if (&other != this)
+        {
+            allocator.deallocate(_data, _size);
+
+            _size = other._size;
+            allocate_data(other._size);
+            copy<T>(other._data, other._data + _size, _data);
+        }
+        return *this;
+    }
+
+    // Move assignment operator
+    Array<T>& operator=(Array&& other)
+    {
+        if (&other != this)
+        {
+            allocator.deallocate(_data, _size);
+
+            _data = other._data;
+            _size = other._size;
+
+            other._data = nullptr;
+            other._size = 0;
+        }
+        return *this;
+    }
 
     // Iterators
     class Iterator
@@ -166,101 +225,13 @@ public:
     T* data() { return _data; }
 
     // Modifiers
-    void fill(const T& value);
+    void fill(const T& value)
+    {
+        for (unsigned i = 0; i < _size; ++i)
+            _data[i] = value;
+    }
     // swap()
 };
-
-//====----------------------------------------------------------------------====
-// Implementations of methods
-//====----------------------------------------------------------------------====
-
-template <class T, class Alloc>
-Array<T, Alloc>::Array(T* arr, size_t len)
-{
-    _size = len;
-    allocate_data(len);
-    copy<T>(arr, arr + _size, _data);
-}
-
-#ifdef USE_STL
-template <class T, class Alloc>
-Array<T, Alloc>::Array(std::initializer_list<T> initlst)
-{
-    _size = initlst.size();
-    allocate_data(_size);
-
-    unsigned idx = 0;
-
-    for (auto x : initlst)
-        _data[idx++] = x;
-}
-#endif
-
-// Copy constructor
-template <class T, class Alloc>
-Array<T, Alloc>::Array(const Array& other)
-{
-    _size = other._size;
-    allocate_data(other._size);
-    copy<T>(other._data, other._data + _size, _data);
-}
-
-// Move constructor
-template <class T, class Alloc>
-Array<T, Alloc>::Array(Array&& other)
-{
-    if (&other != this)
-    {
-        _data = other._data;
-        _size = other._size;
-
-        other._data = nullptr;
-        other._size = 0;
-    }
-}
-
-// Copy assignment operator
-template <class T, class Alloc>
-Array<T>& Array<T, Alloc>::operator=(const Array& other)
-{
-    if (&other != this)
-    {
-        // if (_data)
-        //     delete [] _data;
-        allocator.deallocate(_data, _size);
-
-        _size = other._size;
-        allocate_data(other._size);
-        copy<T>(other._data, other._data + _size, _data);
-    }
-    return *this;
-}
-
-// Move assignment operator
-template <class T, class Alloc>
-Array<T>& Array<T, Alloc>::operator=(Array&& other)
-{
-    if (&other != this)
-    {
-        // if (_data)
-        //     delete [] _data;
-        allocator.deallocate(_data, _size);
-
-        _data = other._data;
-        _size = other._size;
-
-        other._data = nullptr;
-        other._size = 0;
-    }
-    return *this;
-}
-
-template <class T, class Alloc>
-void Array<T, Alloc>::fill(const T& value)
-{
-    for (unsigned i = 0; i < _size; ++i)
-        _data[i] = value;
-}
 
 } // namespace stlite
 

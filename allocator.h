@@ -33,17 +33,17 @@ template <class T>
 class Allocator
 {
 public:
-    Allocator();
-    ~Allocator();
+    Allocator() = default;
+    ~Allocator() = default;
 
     // Return address
     //address
 
     // Allocate block of storage
-    T* allocate(size_t n);
+    T* allocate(size_t n) { return new T[n]; }
 
     // Release block of storage
-    void deallocate(T* p, size_t n);
+    void deallocate(T* p, size_t n) { if (p) delete [] p; }
 
     // Maximum size possible to allocate
     // max_size
@@ -54,29 +54,6 @@ public:
     // Destroy an object
     // destroy
 };
-
-template <class T>
-Allocator<T>::Allocator()
-{
-}
-
-template <class T>
-Allocator<T>::~Allocator()
-{
-}
-
-template <class T>
-T* Allocator<T>::allocate(size_t n)
-{
-    return new T[n];
-}
-
-template <class T>
-void Allocator<T>::deallocate(T* p, size_t n)
-{
-    if (p)
-        delete [] p;
-}
 
 } // namespace stlite
 
