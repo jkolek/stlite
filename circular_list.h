@@ -26,13 +26,11 @@
 
 #include "allocator.h"
 
-// TODO: Rename this to CircularList
-
 namespace stlite
 {
 
 template <class T>
-class List
+class CircularList
 {
     struct Element
     {
@@ -55,17 +53,17 @@ class List
     size_t _size = 0;
 
 public:
-    List() {}
+    CircularList() {}
 
     // This constructor creates list from the given array
-    List(const T* arr, size_t len)
+    CircularList(const T* arr, size_t len)
     {
         for (size_t i = 0; i < len; i++)
             push_back(arr[i]);
     }
 
     // Copy constructor
-    List(const List<T>& other)
+    CircularList(const CircularList<T>& other)
     {
         if (&other != this && other._lst)
         {
@@ -82,7 +80,7 @@ public:
     }
 
     // Move constructor
-    List(List<T>&& other)
+    CircularList(CircularList<T>&& other)
     {
         if (&other != this)
         {
@@ -94,10 +92,10 @@ public:
         }
     }
 
-    ~List() { clear(); }                      // Destructor
+    ~CircularList() { clear(); }                      // Destructor
 
     // Copy assignment operator
-    List<T>& operator=(const List<T>& other)
+    CircularList<T>& operator=(const CircularList<T>& other)
     {
         if (&other != this && other._lst)
         {
@@ -117,7 +115,7 @@ public:
     }
 
     // Move assignment operator
-    List<T>& operator=(List<T>&& other)
+    CircularList<T>& operator=(CircularList<T>&& other)
     {
         if (&other != this)
         {
@@ -139,7 +137,7 @@ public:
         Element* _prev;
         bool _is_end = false;
         bool _next_is_end = false;
-        friend class List;
+        friend class CircularList;
 
         bool test_end(const Iterator& other)
         {
@@ -359,7 +357,7 @@ public:
         }
     }
 
-    void append(const List& other)
+    void append(const CircularList& other)
     {
         if (other._lst)
         {

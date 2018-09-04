@@ -1,17 +1,17 @@
 CXX = g++
 CXXFLAGS = -g -std=c++14 -DUSE_STL
 
-all:  test1 test2 test_list test_forward_list test_vector test_array test_set \
-	  test_stack test_queue
+all:  test1 test2 test_circular_list test_forward_list test_vector test_array \
+	  test_set test_stack test_queue
 
-test1: list.h
+test1: circular_list.h
 	$(CXX) $(CXXFLAGS) test1.cpp -o test1
 
-test2: list.h
+test2: circular_list.h
 	$(CXX) $(CXXFLAGS) test2.cpp -o test2
 
-test_list: list.h
-	$(CXX) $(CXXFLAGS) test_list.cpp -o test_list
+test_circular_list: circular_list.h
+	$(CXX) $(CXXFLAGS) test_circular_list.cpp -o test_circular_list
 
 test_forward_list: forward_list.h
 	$(CXX) $(CXXFLAGS) test_forward_list.cpp -o test_forward_list
@@ -32,5 +32,5 @@ test_queue: queue.h
 	$(CXX) $(CXXFLAGS) test_queue.cpp -o test_queue
 
 clean:
-	-rm test1 test2 test_list test_vector test_array test_set test_stack \
-	test_queue test_forward_list
+	-rm test1 test2 test_circular_list test_vector test_array test_set \
+	test_stack test_queue test_forward_list

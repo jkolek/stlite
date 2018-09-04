@@ -1,10 +1,10 @@
-#include "list.h"
+#include "circular_list.h"
 #include "algorithms.h"
 
 #include <string>
 #include <iostream>
 
-void print_int_list(stlite::List<int> &lst)
+void print_int_list(stlite::CircularList<int> &lst)
 {
 /*    stlite::Listiterator<int> *iter = lst.create_iterator();
     iter->first();
@@ -48,7 +48,7 @@ void quick_sort(int *arr, unsigned size, int lo, int hi)
 
 int main()
 {
-    stlite::List<int> ls;
+    stlite::CircularList<int> ls;
     ls.push_back(1);
     ls.push_back(2);
     ls.push_back(3);
@@ -59,7 +59,7 @@ int main()
     print_int_list(ls);
     std::cout << ls.size() << std::endl;
 
-    stlite::List<int> ls2;
+    stlite::CircularList<int> ls2;
     ls2.push_front(1);
     ls2.push_front(2);
     ls2.push_front(3);
@@ -83,14 +83,14 @@ int main()
     std::cout << "ls2.front() == " << ls2.front() << std::endl;
     std::cout << "ls2.back() == " << ls2.back() << std::endl;
 
-    stlite::List<int> ls3 = ls2;
+    stlite::CircularList<int> ls3 = ls2;
     print_int_list(ls3);
-    stlite::List<int> ls4;
+    stlite::CircularList<int> ls4;
     ls4 = ls3;
     print_int_list(ls4);
 
     int arr[6] = { 22, 33, 44, 55, 66, 77 };
-    stlite::List<int> ls5(arr, 6);
+    stlite::CircularList<int> ls5(arr, 6);
     print_int_list(ls5);
 
     ls5.append(ls4);

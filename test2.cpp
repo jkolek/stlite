@@ -1,4 +1,4 @@
-#include "list.h"
+#include "circular_list.h"
 
 #include <iostream>
 #include <vector>
@@ -8,7 +8,7 @@
 
 void test_linked_list_push_back()
 {
-    stlite::List<int> lst;
+    stlite::CircularList<int> lst;
 
     for (unsigned i = 0; i < MAX_NUM; i++)
         lst.push_back(i);
@@ -43,7 +43,7 @@ void test_vector_push_back()
 
 void test_linked_list_push_front()
 {
-    stlite::List<int> lst;
+    stlite::CircularList<int> lst;
 
     for (unsigned i = 0; i < MAX_NUM; i++)
         lst.push_front(i);

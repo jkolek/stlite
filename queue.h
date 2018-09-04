@@ -24,7 +24,7 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include "list.h"
+#include "circular_list.h"
 
 namespace stlite
 {
@@ -32,7 +32,7 @@ namespace stlite
 template <class T>
 class Queue
 {
-    List<T> _data;
+    CircularList<T> _data;
 
 public:
     Queue() {}

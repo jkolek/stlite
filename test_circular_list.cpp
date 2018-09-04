@@ -1,10 +1,10 @@
-#include "list.h"
+#include "circular_list.h"
 
 #include <string>
 #include <iostream>
 #include <assert.h>
 
-/*void print_int_list(stlite::List<int> &lst)
+/*void print_int_list(stlite::CircularList<int> &lst)
 {
     stlite::Listiterator<int> *iter = lst.create_iterator();
     iter->first();
@@ -20,7 +20,7 @@
 
 int main()
 {
-    stlite::List<int> ls;
+    stlite::CircularList<int> ls;
 
     assert(ls.empty() == true);
     assert(ls.size() == 0);
@@ -64,7 +64,7 @@ int main()
     assert(ls.at(3) == 3);
 
     // Copy constructor test
-    stlite::List<int> ls3 = ls;
+    stlite::CircularList<int> ls3 = ls;
 
     assert(ls3.front() == 22);
     assert(ls3.back() == 3);
@@ -73,7 +73,7 @@ int main()
     assert(ls3.at(2) == 1);
     assert(ls3.at(3) == 3);
 
-    stlite::List<int> ls4;
+    stlite::CircularList<int> ls4;
     // Copy assignment operator test
     ls4 = ls3;
 
@@ -86,7 +86,7 @@ int main()
 
     constexpr unsigned arr_size = 5;
     int arr[arr_size] = { 44, 55, 66, 77, 88 };
-    stlite::List<int> ls5(arr, arr_size);
+    stlite::CircularList<int> ls5(arr, arr_size);
 
     assert(ls5.size() == arr_size);
     assert(ls5.front() == 44);
@@ -131,8 +131,8 @@ int main()
     assert(ls.back() == 15);
 
     // Move constructor test
-    stlite::List<int> *tmp1 = new stlite::List<int>(arr, arr_size);
-    stlite::List<int> ls6(std::move(*tmp1));
+    stlite::CircularList<int> *tmp1 = new stlite::CircularList<int>(arr, arr_size);
+    stlite::CircularList<int> ls6(std::move(*tmp1));
     delete tmp1;
 
     assert(ls6.size() == arr_size);
@@ -140,8 +140,8 @@ int main()
     assert(ls6.back() == 88);
 
     // Move assignment operator test
-    stlite::List<int> *tmp2 = new stlite::List<int>(arr, arr_size);
-    stlite::List<int> ls7;
+    stlite::CircularList<int> *tmp2 = new stlite::CircularList<int>(arr, arr_size);
+    stlite::CircularList<int> ls7;
     ls7 = std::move(*tmp2);
     delete tmp2;
 
@@ -150,8 +150,8 @@ int main()
     assert(ls7.back() == 88);
 
     // Copy constructor test 2
-    stlite::List<int> *tmp3 = new stlite::List<int>(arr, arr_size);
-    stlite::List<int> ls8(*tmp3);
+    stlite::CircularList<int> *tmp3 = new stlite::CircularList<int>(arr, arr_size);
+    stlite::CircularList<int> ls8(*tmp3);
     delete tmp3;
 
     assert(ls8.size() == arr_size);
@@ -159,8 +159,8 @@ int main()
     assert(ls8.back() == 88);
 
     // Copy assignment operator test 2
-    stlite::List<int> *tmp4 = new stlite::List<int>(arr, arr_size);
-    stlite::List<int> ls9;
+    stlite::CircularList<int> *tmp4 = new stlite::CircularList<int>(arr, arr_size);
+    stlite::CircularList<int> ls9;
     ls9 = *tmp4;
     delete tmp4;
 
@@ -168,7 +168,7 @@ int main()
     assert(ls9.front() == 44);
     assert(ls9.back() == 88);
 
-    stlite::List<int>::Iterator it;
+    stlite::CircularList<int>::Iterator it;
     it = ls9.begin();
     assert(*it == 44);
     ++it;
@@ -184,13 +184,13 @@ int main()
     ls9.insert(it, 33);
     assert(*(it++) == 44);
 
-    stlite::List<int> ls10;
+    stlite::CircularList<int> ls10;
     it = ls10.begin();
 
     ls10.insert(it, 100);
     assert(*it == 100);
 
-    // TODO: test List::erase()
+    // TODO: test CircularList::erase()
 
     //std::list<int> mylist;
     //std::list<int>::iterator mit;
@@ -200,11 +200,11 @@ int main()
     //mit--;
     //std::cout << *mit << std::endl;
 
-    stlite::List<int> ls11;
+    stlite::CircularList<int> ls11;
     ls11.push_back(10);
 
     n = 10;
-    for (stlite::List<int>::Iterator it = ls11.begin(); it != ls11.end(); ++it)
+    for (stlite::CircularList<int>::Iterator it = ls11.begin(); it != ls11.end(); ++it)
         assert(*it == n++);
 
     ls11.push_back(11);
@@ -213,7 +213,7 @@ int main()
     ls11.push_back(14);
 
     n = 10;
-    for (stlite::List<int>::Iterator it = ls11.begin(); it != ls11.end(); ++it)
+    for (stlite::CircularList<int>::Iterator it = ls11.begin(); it != ls11.end(); ++it)
         assert(*it == n++);
 
     return 0;
