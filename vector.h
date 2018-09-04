@@ -51,7 +51,26 @@ class Vector
         _data = allocator.allocate(capacity);
     }
 
-    void check_and_alloc_data();
+    void check_and_alloc_data()
+    {
+        if (!_data)
+        {
+            allocate_data(vector_block_size);
+        }
+        else if (_size >= _capacity)
+        {
+            size_t new_capacity = _capacity + vector_block_size;
+
+            if (new_capacity > _max_size)
+                return;
+
+            T* tmp = allocator.allocate(new_capacity);
+            copy<T>(_data, _data + _size, tmp);
+            allocator.deallocate(_data, _capacity);
+            _data = tmp;
+            _capacity = new_capacity;
+        }
+    }
 
 public:
     Vector() {}
@@ -72,19 +91,83 @@ public:
     }
 
     // This constructor creates list from the given array
-    Vector(T* arr, size_t len);
+    Vector(T* arr, size_t len)
+    {
+        _size = len;
+        allocate_data(len);
+        copy<T>(arr, arr + _size, _data);
+    }
 
 #ifdef USE_STL
-    Vector(std::initializer_list<T> initlst);
+    Vector(std::initializer_list<T> initlst)
+    {
+        _size = initlst.size();
+        allocate_data(_size);
+
+        unsigned idx = 0;
+
+        for (auto x : initlst)
+            _data[idx++] = x;
+    }
 #endif
 
-    Vector(const Vector& other);               // Copy constructor
-    Vector(Vector&& other);                    // Move constructor
+    // Copy constructor
+    Vector(const Vector& other)
+    {
+        _size = other._size;
+        allocate_data(other._size);
+        copy<T>(other._data, other._data + _size, _data);
+    }
+
+    // Move constructor
+    Vector(Vector&& other)
+    {
+        if (&other != this)
+        {
+            _data = other._data;
+            _capacity = other._capacity;
+            _size = other._size;
+
+            other._data = nullptr;
+            other._capacity = 0;
+            other._size = 0;
+        }
+    }
 
     ~Vector() { allocator.deallocate(_data, _capacity); }
 
-    Vector<T>& operator=(const Vector& other); // Copy assignment operator
-    Vector<T>& operator=(Vector&& other);      // Move assignment operator
+    // Copy assignment operator
+    Vector<T>& operator=(const Vector& other)
+    {
+        if (&other != this)
+        {
+            allocator.deallocate(_data, _capacity);
+
+            _size = other._size;
+            allocate_data(other._size);
+            copy<T>(other._data, other._data + _size, _data);
+        }
+        return *this;
+    }
+
+
+    // Move assignment operator
+    Vector<T>& operator=(Vector&& other)
+    {
+        if (&other != this)
+        {
+            allocator.deallocate(_data, _capacity);
+
+            _data = other._data;
+            _capacity = other._capacity;
+            _size = other._size;
+
+            other._data = nullptr;
+            other._capacity = 0;
+            other._size = 0;
+        }
+        return *this;
+    }
 
     // Iterators
     class Iterator
@@ -171,179 +254,40 @@ public:
     T* data() { return _data; }
 
     // Modifiers
-    void push_back(const T& value);
-    void push_back(T&& value);
-    void pop_back();
-    void append(const Vector& other);
-    void clear();
+
+    void push_back(const T& value)
+    {
+        check_and_alloc_data();
+        _data[_size++] = value;
+    }
+
+    void push_back(T&& value)
+    {
+        check_and_alloc_data();
+        _data[_size++] = static_cast<T &&>(value);
+    }
+
+    bool pop_back() { if (_size > 0) _size--; }
+
+    void clear() { _size = 0; }
 
     // Allocator
     // http://www.cplusplus.com/reference/vector/vector/get_allocator/
     // get_allocator()
 
     // Operations
-    void reverse();
-};
-
-//====----------------------------------------------------------------------====
-// Implementations of methods
-//====----------------------------------------------------------------------====
-
-template <class T, class Alloc>
-void Vector<T, Alloc>::check_and_alloc_data()
-{
-    if (!_data)
+    void reverse()
     {
-        allocate_data(vector_block_size);
-    }
-    else if (_size >= _capacity)
-    {
-        size_t new_capacity = _capacity + vector_block_size;
-
-        if (new_capacity > _max_size)
+        if (_size == 0)
             return;
 
-        T* tmp = allocator.allocate(new_capacity);
-        copy<T>(_data, _data + _size, tmp);
-        allocator.deallocate(_data, _capacity);
-        _data = tmp;
-        _capacity = new_capacity;
+        unsigned i = 0;
+        unsigned j = _size-1;
+
+        while (i < j)
+            swap(_data[i++], _data[j--]);
     }
-}
-
-template <class T, class Alloc>
-Vector<T, Alloc>::Vector(T *arr, size_t len)
-{
-    _size = len;
-    allocate_data(len);
-    copy<T>(arr, arr + _size, _data);
-}
-
-#ifdef USE_STL
-template <class T, class Alloc>
-Vector<T, Alloc>::Vector(std::initializer_list<T> initlst)
-{
-    _size = initlst.size();
-    allocate_data(_size);
-
-    unsigned idx = 0;
-
-    for (auto x : initlst)
-        _data[idx++] = x;
-}
-#endif
-
-// Copy constructor
-template <class T, class Alloc>
-Vector<T, Alloc>::Vector(const Vector& other)
-{
-    _size = other._size;
-    allocate_data(other._size);
-    copy<T>(other._data, other._data + _size, _data);
-}
-
-// Move constructor
-template <class T, class Alloc>
-Vector<T, Alloc>::Vector(Vector&& other)
-{
-    if (&other != this)
-    {
-        _data = other._data;
-        _capacity = other._capacity;
-        _size = other._size;
-
-        other._data = nullptr;
-        other._capacity = 0;
-        other._size = 0;
-    }
-}
-
-// Copy assignment operator
-template <class T, class Alloc>
-Vector<T>& Vector<T, Alloc>::operator=(const Vector& other)
-{
-    if (&other != this)
-    {
-        // if (_data)
-        //     delete [] _data;
-        allocator.deallocate(_data, _capacity);
-
-        _size = other._size;
-        allocate_data(other._size);
-        copy<T>(other._data, other._data + _size, _data);
-    }
-    return *this;
-}
-
-// Move assignment operator
-template <class T, class Alloc>
-Vector<T>& Vector<T, Alloc>::operator=(Vector&& other)
-{
-    if (&other != this)
-    {
-        // if (_data)
-        //     delete [] _data;
-        allocator.deallocate(_data, _capacity);
-
-        _data = other._data;
-        _capacity = other._capacity;
-        _size = other._size;
-
-        other._data = nullptr;
-        other._capacity = 0;
-        other._size = 0;
-    }
-    return *this;
-}
-
-// Append element to end of the list
-template <class T, class Alloc>
-void Vector<T, Alloc>::push_back(const T& value)
-{
-    check_and_alloc_data();
-    _data[_size++] = value;
-}
-
-// Append element to end of the list
-template <class T, class Alloc>
-void Vector<T, Alloc>::push_back(T&& value)
-{
-    check_and_alloc_data();
-    _data[_size++] = static_cast<T &&>(value);
-}
-
-template <class T, class Alloc>
-void Vector<T, Alloc>::pop_back()
-{
-    if (_size > 0)
-        _size--;
-}
-
-// Append elements of other to end of the vector
-template <class T, class Alloc>
-void Vector<T, Alloc>::append(const Vector& other)
-{
-    // TODO: Implement
-}
-
-template <class T, class Alloc>
-void Vector<T, Alloc>::clear()
-{
-    _size = 0;
-}
-
-template <class T, class Alloc>
-void Vector<T, Alloc>::reverse()
-{
-    if (_size == 0)
-        return;
-
-    unsigned i = 0;
-    unsigned j = _size-1;
-
-    while (i < j)
-        swap(_data[i++], _data[j--]);
-}
+};
 
 } // namespace stlite
 
