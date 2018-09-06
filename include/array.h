@@ -195,8 +195,10 @@ public:
     };
 
     Iterator begin() { return Iterator(_data, 0); }
-    // TODO: This is invalid end
     Iterator end() { return Iterator(nullptr, _size); }
+
+    const Iterator cbegin() const { return Iterator(_data, 0); }
+    const Iterator cend() const { return Iterator(nullptr, _size); }
 
     // Capacity
     size_t size() const { return _size; }
@@ -213,7 +215,14 @@ public:
     // http://www.cplusplus.com/reference/array/array/at/
     // TODO: We must be able to assign values via at():
     //   arr.at(2) = 33;
-    T at(unsigned n)
+    T& at(unsigned n)
+    {
+        if (n < _size)
+            return _data[n];
+        // TODO: Throw out_of_range exception
+    }
+
+    const T& at(unsigned n) const
     {
         if (n < _size)
             return _data[n];
@@ -222,6 +231,10 @@ public:
 
     T& front() { return _data[0]; }
     T& back() { return _data[_size - 1]; }
+
+    const T& front() const { return _data[0]; }
+    const T& back() const { return _data[_size - 1]; }
+
     T* data() { return _data; }
 
     // Modifiers

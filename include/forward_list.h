@@ -163,6 +163,9 @@ public:
     Iterator begin() { return Iterator(_lst); }
     Iterator end() { return Iterator(); }
 
+    const Iterator cbegin() const { return Iterator(_lst); }
+    const Iterator cend() const { return Iterator(); }
+
     // Capacity
     bool empty() const { return _lst == nullptr; }
     size_t max_size() const { return _max_size; }
@@ -170,6 +173,8 @@ public:
     // Element access
     // If the list is empty, the return value of these functions is undefined
     T& front() { return _lst->value; }
+
+    const T& front() const { return _lst->value; }
 
     // Modifiers
 

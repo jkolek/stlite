@@ -205,6 +205,9 @@ public:
     Iterator begin() { return Iterator(_lst); }
     Iterator end() { return Iterator(_lst, true); }
 
+    const Iterator cbegin() const { return Iterator(_lst); }
+    const Iterator cend() const { return Iterator(_lst, true); }
+
     // Capacity
     bool empty() const { return _lst == nullptr; }
     size_t size() const { return _size; }
@@ -213,6 +216,9 @@ public:
     // If the list is empty, the return value of these functions is undefined
     T& front() { return _lst->next->value; }
     T& back() { return _lst->value; }
+
+    const T& front() const { return _lst->next->value; }
+    const T& back() const { return _lst->value; }
 
     T at(unsigned pos)
     {

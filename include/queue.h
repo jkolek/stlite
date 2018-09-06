@@ -50,8 +50,11 @@ public:
     size_t size() const { return _data.size(); }
 
     // Element access
-    T front() { return _data.front(); }
-    T back() { return _data.back(); }
+    T& front() { return _data.front(); }
+    T& back() { return _data.back(); }
+
+    const T& front() const { return _data.front(); }
+    const T& back() const { return _data.back(); }
 
     // Modifiers
     void push(T value) { _data.push_back(value); }
